@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=JetBrains+Mono:wght@500;600;800&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{width:1200px;height:630px;}
+  body{
+    background:#0d1117;
+    background-image:
+      radial-gradient(circle at 50% 42%, rgba(0,255,156,.12) 0%, rgba(0,255,156,0) 46%),
+      radial-gradient(rgba(255,255,255,.05) 1.3px, transparent 1.3px);
+    background-size:auto, 36px 36px;
+    font-family:"Space Grotesk",sans-serif; overflow:hidden;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:30px;
+  }
+  .badge{ width:170px; height:170px; border-radius:30px;
+    background:radial-gradient(circle at 50% 40%, #0f2a22 0%, #0a0f14 80%);
+    border:2px solid rgba(0,255,156,.3); display:flex; align-items:center; justify-content:center;
+    box-shadow:0 0 60px rgba(0,255,156,.2); }
+  .mk{ font-family:"JetBrains Mono",monospace; line-height:1; display:flex; align-items:center;
+       color:#00ff9c; text-shadow:0 0 30px rgba(0,255,156,.5); }
+  .mk .b{ font-size:62px; font-weight:600; color:#0bbf7a; }
+  .mk .t{ font-size:92px; font-weight:800; padding:0 5px; }
+  .word{ font-size:84px; font-weight:700; color:#fff; letter-spacing:-1.5px; }
+  .word b{ color:#00ff9c; }
+  .tag{ font-size:30px; font-weight:500; color:#9aa7b4; }
+  .handle{ font-family:"JetBrains Mono",monospace; font-size:26px; font-weight:600; color:#00ff9c;
+           display:flex; align-items:center; gap:12px; }
+  .handle::before{ content:""; width:12px; height:12px; border-radius:50%; background:#00ff9c;
+           box-shadow:0 0 12px rgba(0,255,156,.6); }
+</style>
+</head>
+<body>
+  <div class="badge"><div class="mk"><span class="b">&lt;</span><span class="t">T</span><span class="b">&gt;</span></div></div>
+  <div class="word">Tamara <b>Codes</b></div>
+  <div class="tag">Building SaaS products in public</div>
+  <div class="handle">@codewithtamara</div>
+</body>
+</html>

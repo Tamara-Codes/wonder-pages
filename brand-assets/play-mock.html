@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#fffbf2;--ink:#2b2440;--muted:#7a7392;--card:#fff;--line:#efe7da;
+        --teal:#21c7b6;--tint:#e3f1ff;--accent:#3da5ff;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{width:1120px;height:720px;}
+  body{background:var(--bg);font-family:"Nunito",sans-serif;color:var(--ink);
+       display:flex;gap:30px;padding:34px 40px;align-items:stretch;}
+  .font-d{font-family:"Baloo 2",cursive;}
+
+  /* scene */
+  .scene{position:relative;flex:0 0 652px;}
+  .scene img{width:652px;height:652px;border-radius:26px;display:block;
+    box-shadow:0 8px 0 rgba(43,36,64,.10);border:4px solid #fff;}
+  .scene .cap{margin-top:14px;text-align:center;color:var(--muted);font-weight:700;font-size:15px;}
+  /* a sample "found" tap marker on the scene (Apple) */
+  .found-mark{position:absolute;width:96px;height:96px;border-radius:50%;
+    border:6px solid var(--teal);box-shadow:0 0 0 4px #fff;}
+
+  /* checklist panel */
+  .panel{flex:1;display:flex;flex-direction:column;}
+  .panel h1{font-size:34px;font-weight:800;line-height:1;}
+  .panel .sub{color:var(--muted);font-weight:700;margin-top:6px;font-size:15px;}
+  .progress{margin:18px 0 14px;}
+  .bar{height:14px;background:var(--line);border-radius:999px;overflow:hidden;}
+  .bar>div{height:100%;width:33%;background:var(--teal);border-radius:999px;}
+  .count{font-weight:800;font-size:14px;color:var(--teal);margin-top:7px;}
+
+  .list{display:flex;flex-direction:column;gap:12px;margin-top:6px;}
+  .item{display:flex;align-items:center;gap:14px;background:var(--card);
+    border:2px solid var(--line);border-radius:18px;padding:11px 16px;
+    box-shadow:0 4px 0 rgba(43,36,64,.06);}
+  .icon{width:52px;height:52px;border-radius:14px;background:var(--tint);
+    display:grid;place-items:center;flex:0 0 auto;}
+  .icon svg{width:38px;height:38px;}
+  .name{font-weight:800;font-size:19px;flex:1;}
+  .chk{width:30px;height:30px;border-radius:50%;border:3px solid var(--line);flex:0 0 auto;}
+  .item.done{background:#eafaf3;border-color:#bdebd8;}
+  .item.done .name{color:var(--muted);text-decoration:line-through;}
+  .item.done .chk{background:var(--teal);border-color:var(--teal);
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 13l4 4L19 7' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-size:22px;background-repeat:no-repeat;background-position:center;}
+</style>
+</head>
+<body>
+  <div class="scene">
+    <img src="http://localhost:8745/hidden-demo.png" alt="seek and find scene">
+    <!-- sample: Apple already found, marked on scene (coords from answer key, scaled 652/1024=0.6367) -->
+    <div class="found-mark" style="left:255px;top:104px;"></div>
+    <div class="cap">Tap each hidden item to check it off your list</div>
+  </div>
+
+  <div class="panel">
+    <h1 class="font-d">Find these!</h1>
+    <div class="sub">Under the Sea · 6 hidden treasures</div>
+    <div class="progress">
+      <div class="bar"><div></div></div>
+      <div class="count">2 of 6 found</div>
+    </div>
+    <div class="list" id="list"></div>
+  </div>
+
+<script>
+  const wrap=i=>`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">${i}</svg>`;
+  const ITEMS=[
+    {label:"Apple",done:true, svg:wrap(`<path d="M52 26 q8 -16 22 -18" fill="none" stroke="#2e2a3f" stroke-width="5"/><path d="M54 22 q12 -8 20 -2 q-6 12 -20 4 Z" fill="#46c36a" stroke="#2e2a3f" stroke-width="4" stroke-linejoin="round"/><path d="M50 32 C40 20 16 24 16 50 C16 76 38 94 50 94 C62 94 84 76 84 50 C84 24 60 20 50 32 Z" fill="#e84a5f" stroke="#2e2a3f" stroke-width="5" stroke-linejoin="round"/>`)},
+    {label:"Star",done:true, svg:wrap(`<path d="M50 6 L62 38 L96 40 L68 62 L78 95 L50 74 L22 95 L32 62 L4 40 L38 38 Z" fill="#ffc93c" stroke="#2e2a3f" stroke-width="5" stroke-linejoin="round"/>`)},
+    {label:"Bell",done:false,svg:wrap(`<g fill="#ff9f1c" stroke="#2e2a3f" stroke-width="5" stroke-linejoin="round"><rect x="44" y="6" width="12" height="12" rx="4"/><path d="M50 14 C30 14 26 40 22 64 C20 76 14 80 14 80 L86 80 C86 80 80 76 78 64 C74 40 70 14 50 14 Z"/><circle cx="50" cy="88" r="8"/></g>`)},
+    {label:"Boot",done:false,svg:wrap(`<path d="M34 10 L60 10 L62 58 L86 62 Q94 64 94 76 L94 90 L28 90 Q24 90 24 82 L28 18 Q28 10 34 10 Z" fill="#3da5ff" stroke="#2e2a3f" stroke-width="5" stroke-linejoin="round"/>`)},
+    {label:"Gift",done:false,svg:wrap(`<g stroke="#2e2a3f" stroke-width="5" stroke-linejoin="round"><rect x="18" y="42" width="64" height="46" rx="4" fill="#ff5ca8"/><rect x="14" y="30" width="72" height="16" rx="4" fill="#ff7ab8"/><rect x="44" y="30" width="12" height="58" fill="#ffd24d"/><path d="M50 30 C40 12 16 18 30 30 Z M50 30 C60 12 84 18 70 30 Z" fill="#ffd24d"/></g>`)},
+    {label:"Key",done:false, svg:wrap(`<g fill="#ffd24d" stroke="#2e2a3f" stroke-width="5" stroke-linejoin="round"><circle cx="30" cy="50" r="20"/><rect x="46" y="44" width="50" height="12" rx="3"/><rect x="78" y="56" width="9" height="16" rx="2"/><rect x="92" y="56" width="8" height="11" rx="2"/></g><circle cx="30" cy="50" r="7" fill="#fff" stroke="#2e2a3f" stroke-width="4"/>`)},
+  ];
+  document.getElementById('list').innerHTML=ITEMS.map(it=>`
+    <div class="item ${it.done?'done':''}">
+      <div class="icon">${it.svg}</div>
+      <div class="name">${it.label}</div>
+      <div class="chk"></div>
+    </div>`).join('');
+</script>
+</body>
+</html>

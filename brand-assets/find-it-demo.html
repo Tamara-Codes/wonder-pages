@@ -1,0 +1,100 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{width:1024px;height:1024px;overflow:hidden;}
+  #scene{position:relative;width:1024px;height:1024px;
+    background:linear-gradient(#9fe3ff 0%,#3da5ff 45%,#1b6fc4 100%);}
+  .item{position:absolute;}
+  /* Wobble — the REAL hidden-character sprite from lib/sprites.ts (ocean tint) */
+  #wobble{position:absolute;}
+  /* answer ring, shown only at #answer */
+  #ring{position:absolute;display:none;border:7px solid #ff2d6f;border-radius:50%;
+    box-shadow:0 0 0 4px #fff, 0 8px 24px rgba(0,0,0,.4);}
+  #ring::after{content:"Wobble!";position:absolute;left:50%;top:-46px;transform:translateX(-50%);
+    background:#ff2d6f;color:#fff;font:700 22px/1 system-ui;padding:8px 14px;border-radius:999px;white-space:nowrap;}
+  body:target{}
+</style>
+</head>
+<body>
+<div id="scene"></div>
+<svg width="0" height="0"><defs></defs></svg>
+<script>
+  // ---- Answer key (matches route.ts math for a 1024x1024 image) ----
+  const W=1024,H=1024;
+  const size=Math.round(Math.min(W,H)*0.09);   // 92
+  const ans={x:742,y:286,w:size,h:size};        // a spot WE choose -> exact answer
+
+  const scene=document.getElementById('scene');
+  // deterministic pseudo-random so the scene is reproducible
+  let s=1337; const rnd=()=>{s=(s*1103515245+12345)&0x7fffffff;return s/0x7fffffff;};
+  const pick=a=>a[Math.floor(rnd()*a.length)];
+
+  function el(html,x,y,scale=1,rot=0,z=1){
+    const d=document.createElement('div');d.className='item';d.innerHTML=html;
+    d.style.left=x+'px';d.style.top=y+'px';d.style.zIndex=z;
+    d.style.transform=`rotate(${rot}deg) scale(${scale})`;d.style.transformOrigin='center';
+    scene.appendChild(d);
+  }
+  const fishColors=['#ff7a45','#ffc93c','#ff5ca8','#8a6cff','#46c36a','#ffffff','#ff9f1c','#e84a5f'];
+  function fish(){
+    const c=pick(fishColors), w=46+rnd()*40;
+    return `<svg width="${w*1.5}" height="${w}" viewBox="0 0 90 60">
+      <path d="M60 30 L90 8 L90 52 Z" fill="${c}"/>
+      <ellipse cx="36" cy="30" rx="36" ry="26" fill="${c}"/>
+      <circle cx="20" cy="24" r="6" fill="#fff"/><circle cx="19" cy="24" r="3" fill="#222"/>
+      <path d="M40 18 q12 12 0 24" fill="none" stroke="rgba(0,0,0,.15)" stroke-width="4"/>
+    </svg>`;
+  }
+  const bubble=r=>`<svg width="${r*2}" height="${r*2}"><circle cx="${r}" cy="${r}" r="${r-2}" fill="rgba(255,255,255,.45)" stroke="rgba(255,255,255,.7)" stroke-width="2"/></svg>`;
+  const star=()=>{const c=pick(['#ffc93c','#ff7a45','#ff5ca8']);return `<svg width="60" height="60" viewBox="0 0 100 100"><path d="M50 6 L62 38 L96 40 L68 60 L78 94 L50 72 L22 94 L32 60 L4 40 L38 38 Z" fill="${c}" stroke="rgba(0,0,0,.15)" stroke-width="3"/></svg>`};
+  const seaweed=h=>`<svg width="46" height="${h}" viewBox="0 0 46 ${h}"><path d="M23 ${h} q-26 -${h*0.3} 0 -${h*0.55} q26 -${h*0.25} 0 -${h*0.55}" fill="none" stroke="#2fae6b" stroke-width="13" stroke-linecap="round"/></svg>`;
+  const coral=()=>{const c=pick(['#ff5ca8','#ff7a45','#8a6cff']);return `<svg width="120" height="100" viewBox="0 0 120 100"><g fill="${c}" stroke="rgba(0,0,0,.12)" stroke-width="3"><path d="M60 100 V50 M60 60 q-20 -20 -34 -8 M60 64 q22 -16 34 0 M40 96 V58 q-16 -8 -22 6 M80 96 V58 q16 -8 22 6"/><circle cx="26" cy="44" r="11"/><circle cx="94" cy="50" r="11"/><circle cx="18" cy="60" r="8"/><circle cx="102" cy="62" r="8"/></g></svg>`};
+  const dolphin=()=>`<svg width="170" height="110" viewBox="0 0 170 110"><path d="M10 70 q40 -60 110 -50 q40 6 48 0 q-18 26 -44 24 q14 18 -2 30 q-8 -16 -22 -14 q-44 6 -78 -8 q-16 -6 -12 8 q-12 -8 0 -20 Z" fill="#5566cc" stroke="rgba(0,0,0,.15)" stroke-width="3"/><circle cx="44" cy="44" r="5" fill="#fff"/><circle cx="44" cy="44" r="2.5" fill="#222"/></svg>`;
+  const chest=()=>`<svg width="150" height="120" viewBox="0 0 150 120"><rect x="10" y="50" width="130" height="62" rx="8" fill="#b5752e" stroke="#6e4516" stroke-width="5"/><path d="M10 50 q65 -44 130 0 Z" fill="#cf8a3c" stroke="#6e4516" stroke-width="5"/><rect x="62" y="58" width="26" height="22" rx="4" fill="#ffd84d" stroke="#6e4516" stroke-width="4"/><circle cx="40" cy="44" r="7" fill="#ffd84d"/><circle cx="100" cy="40" r="6" fill="#9be8ff"/><circle cx="74" cy="34" r="6" fill="#ff8fc7"/></svg>`;
+
+  // sandy floor
+  el(`<svg width="1024" height="200"><path d="M0 200 V70 q256 -70 512 0 q256 70 512 0 V200 Z" fill="#f6e3a8"/></svg>`,0,824,1,0,2);
+
+  // set pieces
+  el(chest(),420,860,1.1,-4,4);
+  el(dolphin(),120,150,1,6,3);
+  el(dolphin(),700,640,.8,-10,3);
+  el(coral(),60,760,1.1,0,3); el(coral(),300,800,.9,0,3);
+  el(coral(),760,790,1.2,0,3); el(coral(),900,820,.8,0,3); el(coral(),560,810,1,0,3);
+  [60,180,520,840,940].forEach((x,i)=>el(seaweed(180+i*20),x,1024-200-(150+i*15),1,0,3));
+
+  // dense scatter
+  for(let i=0;i<46;i++){el(fish(),rnd()*940,40+rnd()*740,1,(rnd()*40-20),4);}
+  for(let i=0;i<14;i++){el(star(),rnd()*960,700+rnd()*260,1,rnd()*60,2);}
+  for(let i=0;i<70;i++){const r=5+rnd()*12;el(bubble(r),rnd()*1010,rnd()*1000,1,0,5);}
+
+  // ---- composite Wobble at the answer coords (the bit our code owns) ----
+  const ocean='#3da5ff';
+  const wob=document.createElement('div');wob.id='wobble';
+  wob.style.left=ans.x+'px';wob.style.top=ans.y+'px';
+  wob.style.width=size+'px';wob.style.height=size+'px';wob.style.zIndex=4;
+  wob.innerHTML=`<svg width="${size}" height="${size}" viewBox="0 0 100 100">
+    <ellipse cx="50" cy="92" rx="26" ry="6" fill="rgba(0,0,0,0.15)"/>
+    <path d="M50 8 C26 8 16 28 16 52 C16 78 30 92 50 92 C70 92 84 78 84 52 C84 28 74 8 50 8 Z" fill="${ocean}" stroke="#2e2a3f" stroke-width="4"/>
+    <circle cx="38" cy="48" r="10" fill="#fff"/><circle cx="62" cy="48" r="10" fill="#fff"/>
+    <circle cx="40" cy="50" r="4.5" fill="#2e2a3f"/><circle cx="60" cy="50" r="4.5" fill="#2e2a3f"/>
+    <path d="M40 68 Q50 78 60 68" fill="none" stroke="#2e2a3f" stroke-width="4" stroke-linecap="round"/>
+    <path d="M30 20 q-8 -10 2 -14" fill="none" stroke="#2e2a3f" stroke-width="4" stroke-linecap="round"/>
+    <path d="M70 20 q8 -10 -2 -14" fill="none" stroke="#2e2a3f" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="28" cy="6" r="4" fill="${ocean}" stroke="#2e2a3f" stroke-width="3"/>
+    <circle cx="72" cy="6" r="4" fill="${ocean}" stroke="#2e2a3f" stroke-width="3"/></svg>`;
+  scene.appendChild(wob);
+
+  // answer ring (only when URL ends with #answer)
+  const ring=document.createElement('div');ring.id='ring';
+  const pad=18;
+  ring.style.left=(ans.x-pad)+'px';ring.style.top=(ans.y-pad)+'px';
+  ring.style.width=(ans.w+pad*2)+'px';ring.style.height=(ans.h+pad*2)+'px';
+  scene.appendChild(ring);
+  if(location.hash==='#answer') ring.style.display='block';
+</script>
+</body>
+</html>

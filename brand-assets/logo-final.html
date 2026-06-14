@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;800&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{width:800px;height:800px;}
+  body{display:flex;align-items:center;justify-content:center;background:#0d1117;}
+  .avatar{width:800px;height:800px;border-radius:50%;position:relative;overflow:hidden;
+          display:flex;align-items:center;justify-content:center;
+          background:radial-gradient(circle at 50% 40%,#0f2a22 0%,#0d1117 72%);}
+  .ring{position:absolute;inset:22px;border-radius:50%;border:6px solid rgba(0,255,156,.18);}
+  .m{font-family:"JetBrains Mono",monospace;line-height:1;display:flex;align-items:center;
+     color:#00ff9c;text-shadow:0 0 60px rgba(0,255,156,.5);}
+  .b{font-size:300px;font-weight:600;color:#0bbf7a;}
+  .t{font-size:430px;font-weight:800;padding:0 12px;}
+</style>
+</head>
+<body>
+  <div class="avatar"><div class="ring"></div>
+    <div class="m"><span class="b">&lt;</span><span class="t">T</span><span class="b">&gt;</span></div>
+  </div>
+</body>
+</html>

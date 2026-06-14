@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Fredoka:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#fffbf2;--ink:#2b2440;--muted:#7a7392;
+    --pink:#ff5ca8;--yellow:#ffc93c;--teal:#21c7b6;--teal-d:#16a596;--purple:#8a6cff;--orange:#ff7a45;--blue:#3da5ff;--purple-d:#6f4fe0;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);font-family:"Fredoka",sans-serif;color:var(--ink);padding:52px 56px;}
+  h2.section{font-family:"Baloo 2";font-weight:700;font-size:20px;color:var(--muted);margin:0 0 30px;}
+  .row{display:flex;gap:60px;flex-wrap:wrap;}
+  .concept{display:flex;flex-direction:column;align-items:center;gap:18px;width:240px;}
+  .tile{width:240px;height:240px;border-radius:52px;display:grid;place-items:center;
+        box-shadow:0 11px 0 rgba(43,36,64,.12);}
+  .tile svg{width:165px;height:165px;}
+  .label{font-weight:600;font-size:18px;text-align:center;}
+  .label b{font-family:"Baloo 2";font-weight:800;}
+</style>
+</head>
+<body>
+  <h2 class="section">“Rainbow pages” — redone as a printable, giftable booklet</h2>
+  <div class="row">
+
+    <!-- 1: open activity booklet, rainbow page layers -->
+    <div class="concept">
+      <div class="tile" style="background:var(--purple)">
+        <svg viewBox="0 0 100 100">
+          <!-- left rainbow page layers (back to front) -->
+          <g stroke="#2b2440" stroke-width="2.6" stroke-linejoin="round">
+            <path d="M50 42 C40 36 24 35 13 41 L13 79 C24 73 40 74 50 81 Z" fill="var(--purple-d)"/>
+            <path d="M50 39 C40 33 24 32 13 38 L13 76 C24 70 40 71 50 78 Z" fill="var(--teal)"/>
+            <path d="M50 36 C40 30 24 29 13 35 L13 73 C24 67 40 68 50 75 Z" fill="var(--orange)"/>
+            <path d="M50 33 C40 27 24 26 13 32 L13 70 C24 64 40 65 50 72 Z" fill="var(--pink)"/>
+          </g>
+          <!-- right rainbow page layers -->
+          <g stroke="#2b2440" stroke-width="2.6" stroke-linejoin="round">
+            <path d="M50 42 C60 36 76 35 87 41 L87 79 C76 73 60 74 50 81 Z" fill="var(--purple-d)"/>
+            <path d="M50 39 C60 33 76 32 87 38 L87 76 C76 70 60 71 50 78 Z" fill="var(--teal)"/>
+            <path d="M50 36 C60 30 76 29 87 35 L87 73 C76 67 60 68 50 75 Z" fill="var(--orange)"/>
+            <path d="M50 33 C60 27 76 26 87 32 L87 70 C76 64 60 65 50 72 Z" fill="var(--pink)"/>
+          </g>
+          <!-- white top pages -->
+          <path d="M50 30 C40 24 24 23 13 29 L13 67 C24 61 40 62 50 69 Z" fill="#fff" stroke="#2b2440" stroke-width="4" stroke-linejoin="round"/>
+          <path d="M50 30 C60 24 76 23 87 29 L87 67 C76 61 60 62 50 69 Z" fill="#fff" stroke="#2b2440" stroke-width="4" stroke-linejoin="round"/>
+          <path d="M50 30 V69" stroke="#2b2440" stroke-width="4"/>
+          <g stroke="#cfd6e6" stroke-width="2.6" stroke-linecap="round"><path d="M21 40 H41"/><path d="M21 47 H41"/><path d="M59 40 H79"/><path d="M59 47 H79"/></g>
+          <path d="M77 9 l3 8 8 3 -8 3 -3 8 -3 -8 -8 -3 8 -3 Z" fill="var(--yellow)" stroke="#2b2440" stroke-width="3" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="label"><b>1.</b> Open booklet, rainbow pages</div>
+    </div>
+
+    <!-- 2: closed activity book + rainbow page edge -->
+    <div class="concept">
+      <div class="tile" style="background:var(--yellow)">
+        <svg viewBox="0 0 100 100">
+          <!-- rainbow fore-edge (the pages) -->
+          <g stroke="#2b2440" stroke-width="3" stroke-linejoin="round">
+            <rect x="70" y="20" width="13" height="62" rx="4" fill="#fff"/>
+            <rect x="70" y="20" width="13" height="13" fill="var(--pink)"/>
+            <rect x="70" y="33" width="13" height="13" fill="var(--orange)"/>
+            <rect x="70" y="46" width="13" height="13" fill="var(--teal)"/>
+            <rect x="70" y="59" width="13" height="13" fill="var(--purple)"/>
+            <rect x="70" y="72" width="13" height="10" fill="var(--blue)"/>
+            <rect x="70" y="20" width="13" height="62" rx="4" fill="none"/>
+          </g>
+          <!-- cover -->
+          <rect x="20" y="16" width="54" height="70" rx="9" fill="var(--teal)" stroke="#2b2440" stroke-width="4"/>
+          <rect x="20" y="16" width="11" height="70" rx="5" fill="var(--teal-d)" stroke="#2b2440" stroke-width="4"/>
+          <path d="M50 36 l4.5 10 11 .8 -8.5 7 2.8 10.6 -9.8 -5.7 -9.8 5.7 2.8 -10.6 -8.5 -7 11 -.8 Z" fill="#fff" stroke="#2b2440" stroke-width="3" stroke-linejoin="round"/>
+          <path d="M82 8 l2.6 7 7 2.6 -7 2.6 -2.6 7 -2.6 -7 -7 -2.6 7 -2.6 Z" fill="#fff" stroke="#2b2440" stroke-width="2.6" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="label"><b>2.</b> Activity book + rainbow edge</div>
+    </div>
+
+    <!-- 3: stack of booklets (gift set) -->
+    <div class="concept">
+      <div class="tile" style="background:var(--blue)">
+        <svg viewBox="0 0 100 100">
+          <g stroke="#2b2440" stroke-width="3.4" stroke-linejoin="round">
+            <g transform="rotate(-7 50 64)"><rect x="20" y="56" width="60" height="22" rx="7" fill="var(--orange)"/><rect x="20" y="56" width="11" height="22" rx="5" fill="#e8662f"/></g>
+            <g transform="rotate(4 50 50)"><rect x="22" y="40" width="58" height="22" rx="7" fill="var(--pink)"/><rect x="22" y="40" width="11" height="22" rx="5" fill="#d63f86"/></g>
+            <g transform="rotate(-3 50 36)"><rect x="23" y="22" width="56" height="23" rx="7" fill="var(--teal)"/><rect x="23" y="22" width="11" height="23" rx="5" fill="var(--teal-d)"/>
+              <path d="M58 27 l3.4 7.6 8.3 .6 -6.4 5.3 2.1 8-7.4-4.3-7.4 4.3 2.1-8-6.4-5.3 8.3-.6 Z" fill="#fff"/></g>
+          </g>
+          <path d="M78 9 l2.8 7.6 8 2.8 -8 2.8 -2.8 8 -2.8 -8 -8 -2.8 8 -2.8 Z" fill="#fff" stroke="#2b2440" stroke-width="2.8" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="label"><b>3.</b> Booklet stack (gift set)</div>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root{
+    --accent:#00ff9c; --accent-2:#0bbf7a; --glow:rgba(0,255,156,.55);
+  }
+  html,body { width:2560px; height:1440px; }
+  body{
+    background:#0d1117;
+    background-image:
+      radial-gradient(circle at 50% 50%, rgba(0,255,156,.10) 0%, rgba(0,255,156,0) 38%),
+      radial-gradient(rgba(255,255,255,.05) 1.4px, transparent 1.4px);
+    background-size:auto, 40px 40px;
+    display:flex; align-items:center; justify-content:center;
+    font-family:"Space Grotesk",sans-serif; overflow:hidden;
+  }
+  /* YouTube safe area: 1546 x 423, centered */
+  .safe{ width:1546px; height:423px; display:flex; align-items:center; gap:70px; }
+
+  .badge{
+    flex:0 0 auto; width:300px; height:300px; border-radius:32px;
+    background:radial-gradient(circle at 50% 40%, #0f2a22 0%, #0a0f14 80%);
+    border:2px solid rgba(0,255,156,.28);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 0 80px rgba(0,255,156,.18);
+  }
+  .mark{ display:flex; align-items:center; font-family:"JetBrains Mono",monospace; line-height:1; }
+  .brk{ font-size:112px; font-weight:600; color:var(--accent-2); }
+  .t  { font-size:170px; font-weight:800; padding:0 6px; color:var(--accent);
+        text-shadow:0 0 40px var(--glow); }
+
+  .copy{ display:flex; flex-direction:column; gap:18px; }
+  .word{ font-size:120px; font-weight:700; color:#fff; letter-spacing:-2px; line-height:.95; }
+  .word b{ color:var(--accent); }
+  .tag{ font-size:42px; font-weight:500; color:#9aa7b4; letter-spacing:.5px; }
+  .handle{ margin-top:8px; font-family:"JetBrains Mono",monospace; font-size:34px;
+           font-weight:600; color:var(--accent); display:flex; align-items:center; gap:14px; }
+  .handle::before{ content:""; width:14px; height:14px; border-radius:50%;
+           background:var(--accent); box-shadow:0 0 14px var(--glow); }
+</style>
+</head>
+<body>
+  <div class="safe">
+    <div class="badge">
+      <div class="mark"><span class="brk">&lt;</span><span class="t">T</span><span class="brk">&gt;</span></div>
+    </div>
+    <div class="copy">
+      <div class="word">Tamara <b>Codes</b></div>
+      <div class="tag">Building SaaS products in public</div>
+      <div class="handle">@codewithtamara</div>
+    </div>
+  </div>
+</body>
+</html>

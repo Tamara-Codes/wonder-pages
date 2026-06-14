@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@800&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#fffbf2;--pink:#ff5ca8;--teal:#21c7b6;--border:#efe7da;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);font-family:"Baloo 2",cursive;font-weight:800;}
+  .pad{padding:50px 56px;}
+  .lock{display:flex;align-items:center;gap:16px;}
+  .lock.big{font-size:60px;}
+  .pink{color:var(--pink);} .teal{color:var(--teal);}
+  /* app header preview */
+  .header{display:flex;align-items:center;justify-content:space-between;
+    border-bottom:1px solid var(--border);padding:14px 28px;background:rgba(255,251,242,.92);}
+  .header .lock{font-size:22px;gap:9px;}
+  .pill{font-family:"Baloo 2";font-weight:800;font-size:14px;background:#fff;border-radius:999px;
+    padding:9px 18px;box-shadow:0 4px 0 rgba(43,36,64,.07);color:#2b2440;}
+</style>
+</head>
+<body>
+  <div class="header">
+    <span class="lock"><img src="/brand-assets/wonder-icon.svg" width="32" height="32"><span><span class="pink">Wonder</span> <span class="teal">Pages</span></span></span>
+    <span class="pill">Log in</span>
+  </div>
+  <div class="pad">
+    <div class="lock big"><img src="/brand-assets/wonder-icon.svg" width="76" height="76"><span><span class="pink">Wonder</span> <span class="teal">Pages</span></span></div>
+  </div>
+</body>
+</html>
