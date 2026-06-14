@@ -7,12 +7,12 @@ import {
   Sparkle,
   Mail,
   Smile,
-  Printer,
   Wand,
   Zap,
 } from "@/components/icons";
 import type { ComponentType } from "react";
 import { SiteHeader } from "@/components/site-header";
+import { NotifyForm } from "@/components/notify-form";
 
 type Icon = ComponentType<{ size?: number }>;
 
@@ -20,20 +20,20 @@ type Icon = ComponentType<{ size?: number }>;
 const JOURNEY: { Icon: Icon; title: string; copy: string; color: string }[] = [
   {
     Icon: Wand,
-    title: "Build it",
-    copy: "Pick a game and a world they love. Wonder Pages creates a one-of-a-kind game in seconds — ready to play on any screen.",
+    title: "Create & play",
+    copy: "Pick a world a kid loves and make the games — coloring, find-it and more. Play one of each free with no sign-up. Want more? Log in — token packs are coming soon.",
     color: "var(--purple)",
   },
   {
-    Icon: Printer,
-    title: "Print it",
-    copy: "Print it at home to colour, solve and play on paper — as many times as you like, no screen needed.",
+    Icon: Gift,
+    title: "Build the booklet",
+    copy: "Gather the favorites into one keepsake activity book and add a personal first page — the kid's name, a note, a little dedication just for them.",
     color: "var(--blue)",
   },
   {
-    Icon: Gift,
-    title: "Gift it",
-    copy: "Order it as a one-of-a-kind printed booklet, posted to your door as a keepsake or as a gift — no printer needed. Coming soon.",
+    Icon: Mail,
+    title: "Delivered to the door",
+    copy: "We print it as a beautiful bound booklet and post it to any address you enter — your home, or straight to the lucky kid. No printer needed. Delivery coming soon.",
     color: "var(--pink)",
   },
 ];
@@ -63,9 +63,8 @@ const EXAMPLES: {
 
 // Parent-friendly reassurance row, shown just under the hero.
 const TRUST: { Icon: Icon; label: string; color: string }[] = [
-  { Icon: Smile, label: "Kid-friendly game ideas", color: "var(--pink)" },
-  { Icon: Printer, label: "Printable at home", color: "var(--blue)" },
-  { Icon: Gift, label: "First game free", color: "var(--teal)" },
+  { Icon: Smile, label: "Personalized, one of a kind", color: "var(--pink)" },
+  { Icon: Gift, label: "One of each game free", color: "var(--teal)" },
   { Icon: Zap, label: "Made in seconds", color: "var(--orange)" },
   { Icon: Sparkle, label: "No sign-up needed", color: "var(--purple)" },
 ];
@@ -77,7 +76,7 @@ export default function Home() {
 
       <main className="flex-1">
         {/* ── Hero ─────────────────────────────────────────────── */}
-        <section className="relative mx-auto max-w-5xl px-6 pt-20 pb-16">
+        <section className="relative mx-auto max-w-5xl px-6 pt-10 sm:pt-20 pb-6 sm:pb-16 lg:-left-24">
           <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-12">
             {/* Left — message + CTA */}
             <div className="text-center lg:text-left">
@@ -85,23 +84,26 @@ export default function Home() {
                 className="pop font-label uppercase tracking-[0.16em] text-xs font-semibold text-muted"
                 style={{ animationDelay: "0.04s" }}
               >
-                Personalized printable games for kids
+                A one-of-a-kind gift for a kid you love
               </p>
               <h1
                 className="pop font-display font-extrabold leading-[1.02] mt-3 text-[clamp(36px,5.6vw,60px)]"
                 style={{ animationDelay: "0.1s" }}
               >
-                Turn your child&apos;s favorite{" "}
-                <span style={{ color: "var(--pink)" }}>worlds</span> into
-                printable <span style={{ color: "var(--teal)" }}>games</span>
+                Turn a kid&apos;s favorite{" "}
+                <span style={{ color: "var(--teal)" }}>world</span> into a{" "}
+                <span style={{ color: "var(--pink)" }}>gift</span>{" "}
+                they&apos;ll keep
               </h1>
               <p
                 className="pop mx-auto lg:mx-0 mt-4 max-w-[48ch] text-lg font-semibold text-muted"
                 style={{ animationDelay: "0.18s" }}
               >
-                Pick a game style, add a world they love — dinosaurs, unicorns,
-                space, the ocean, race cars — and Wonder Pages creates a
-                one-of-a-kind activity game to play or print today.
+                Pick a world a kid loves — dinosaurs, unicorns, space, race
+                cars — and create and play one of each game free. Collect the
+                favorites into a personalized booklet, add a note just for them,
+                and we&apos;ll post it as a keepsake gift — for your own child, a
+                niece, a friend&apos;s little one.
               </p>
 
               {/* Primary CTA → the builder */}
@@ -115,18 +117,21 @@ export default function Home() {
                   style={{ background: "var(--teal)" }}
                 >
                   <Sparkle size={22} />
-                  Create your free game
+                  Create a game
                 </Link>
+                <span className="font-display text-sm font-semibold text-muted">
+                  One of each game free · no sign-up · booklet delivery coming soon
+                </span>
               </div>
             </div>
 
             {/* Right — the coloring app (coloured in) + a printed booklet beside it */}
             <div
-              className="pop relative mx-auto w-full max-w-[480px] lg:max-w-none pb-4"
+              className="pop relative mx-auto w-full max-w-[480px] lg:max-w-none mt-8 lg:mt-0 pb-10 sm:pb-4 left-3 lg:left-0"
               style={{ animationDelay: "0.16s" }}
             >
               {/* The coloring app — full screen, coloured in */}
-              <div className="relative z-10 w-[76%] rotate-[-1.5deg]">
+              <div className="relative z-10 w-[54%] sm:w-[64%] lg:w-[76%] rotate-[-1.5deg]">
                 <div className="overflow-hidden rounded-[26px] border border-border bg-card shadow-pop lift">
                   {/* App top bar */}
                   <div className="flex items-center gap-2 border-b border-border px-4 py-2.5">
@@ -176,8 +181,11 @@ export default function Home() {
                 </span>
               </div>
 
-              {/* The printed personalized booklet, beside it — larger, leaning right */}
-              <div className="absolute -bottom-8 -right-52 z-20 w-[84%] sm:w-[82%]">
+              {/* The printed personalized booklet, beside it — larger, leaning right.
+                  It's rotated 22°, which shrinks its visual footprint, so it carries
+                  a larger width than the app to read as the same size. Centered on the
+                  same vertical axis as the app so the two sit level, not staggered. */}
+              <div className="absolute top-1/2 -translate-y-1/2 right-2 sm:-right-20 lg:top-auto lg:bottom-[-2rem] lg:translate-y-0 lg:-right-52 z-20 w-[72%] sm:w-[78%] lg:w-[84%]">
                 <Image
                   src="/booklet.png"
                   alt="A printed, personalized Wonder Pages princess activity booklet."
@@ -186,10 +194,10 @@ export default function Home() {
                   className="h-auto w-full rotate-[22deg] drop-shadow-xl"
                 />
                 <span
-                  className="absolute -top-3 left-1/2 -translate-x-1/2 z-30 inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 py-1.5 font-display font-bold text-[13px] text-white shadow-md"
+                  className="absolute top-1 left-[60%] -translate-x-1/2 rotate-[11deg] lg:top-[-0.75rem] lg:left-1/2 lg:rotate-0 z-30 inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 py-1.5 font-display font-bold text-[13px] text-white shadow-md"
                   style={{ background: "var(--pink)" }}
                 >
-                  <Gift size={15} /> Print it as a gift
+                  <Gift size={15} /> Order it as a gift
                 </span>
               </div>
             </div>
@@ -197,7 +205,7 @@ export default function Home() {
         </section>
 
         {/* ── Trust / value strip (right under the hero) ───────── */}
-        <section className="mx-auto max-w-5xl px-6 mt-12 pb-20">
+        <section className="mx-auto max-w-5xl px-6 mt-5 sm:mt-12 pb-20">
           <ul className="pop flex flex-wrap items-center justify-center gap-x-5 gap-y-3 rounded-3xl bg-card shadow-pop-sm px-5 py-4">
             {TRUST.map((t) => (
               <li
@@ -217,14 +225,14 @@ export default function Home() {
           </ul>
         </section>
 
-        {/* ── Journey: build it → print or gift it ──────────────── */}
+        {/* ── Journey: create & play → booklet → delivered ──────── */}
         <section style={{ background: "#f4f1fe" }}>
           <div className="mx-auto max-w-5xl px-6 py-20">
           <h2 className="pop text-center font-display text-2xl sm:text-3xl font-extrabold">
-            Build it — then print or{" "}
-            <span style={{ color: "var(--pink)" }}>gift</span> it
+            From games they play to a{" "}
+            <span style={{ color: "var(--pink)" }}>gift</span> in the mail
           </h2>
-          <ul className="mt-7 grid gap-5 sm:grid-cols-3" aria-label="What you can do with your game">
+          <ul className="mt-7 grid gap-5 sm:grid-cols-3" aria-label="How Wonder Pages works">
             {JOURNEY.map((s, i) => (
               <li
                 key={s.title}
@@ -318,13 +326,15 @@ export default function Home() {
                   <Mail size={13} /> Coming soon
                 </span>
                 <h2 className="font-display text-2xl sm:text-3xl font-extrabold mt-3">
-                  Make it a gift
+                  The keepsake booklet, in the mail
                 </h2>
                 <p className="text-muted font-semibold mt-2 max-w-[52ch]">
-                  Soon you&apos;ll be able to turn your child&apos;s favorite
-                  activity games into a beautifully printed booklet, mailed to
-                  someone special.
+                  Soon you&apos;ll gather several games into one bound activity
+                  booklet, add a personal first page, and have it printed and
+                  posted to any address you enter — a one-of-a-kind gift, no
+                  printer needed. Want first dibs?
                 </p>
+                <NotifyForm source="booklet" />
               </div>
             </div>
           </div>

@@ -4,7 +4,12 @@ export type ThemeId =
   | "space"
   | "dinosaurs"
   | "ocean"
-  | "race-cars";
+  | "race-cars"
+  | "ghosts"
+  | "mermaids"
+  | "animals"
+  | "sports"
+  | "sweets";
 
 export interface Theme {
   id: ThemeId;
@@ -67,6 +72,51 @@ export const THEMES: Theme[] = [
     color: "#ff7a45",
     tint: "#ffe9df",
     prompt: "fast race cars on a winding track with flags and trophies",
+  },
+  {
+    id: "ghosts",
+    name: "Ghosts",
+    emoji: "👻",
+    color: "#6c8cff",
+    tint: "#e9eeff",
+    prompt:
+      "friendly, cute cartoon ghosts floating among pumpkins, bats and a spooky-but-happy haunted house",
+  },
+  {
+    id: "mermaids",
+    name: "Mermaids",
+    emoji: "🧜‍♀️",
+    color: "#16b8a6",
+    tint: "#dcf7f1",
+    prompt:
+      "friendly mermaids with flowing hair and shimmering tails, seashells, pearls and an underwater coral palace",
+  },
+  {
+    id: "animals",
+    name: "Animals",
+    emoji: "🐾",
+    color: "#e8932f",
+    tint: "#fdeedd",
+    prompt:
+      "a cheerful group of friendly cartoon animals — a lion, elephant, rabbit and bear — in a sunny meadow",
+  },
+  {
+    id: "sports",
+    name: "Sports",
+    emoji: "⚽",
+    color: "#f0453f",
+    tint: "#ffe3e1",
+    prompt:
+      "happy kids playing sports with a soccer ball, basketball, trophy and medals on a sunny field",
+  },
+  {
+    id: "sweets",
+    name: "Sweets",
+    emoji: "🍭",
+    color: "#c86be0",
+    tint: "#f6e6fb",
+    prompt:
+      "a whimsical candy land with lollipops, cupcakes, candy canes, gumdrops and ice cream",
   },
 ];
 

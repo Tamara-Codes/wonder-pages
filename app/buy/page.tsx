@@ -103,20 +103,9 @@ export default function BuyPage() {
             })}
           </div>
 
-          {/* General interest */}
-          <button
-            onClick={() => notify(0)}
-            disabled={busy !== null || done.has(0)}
-            className="mt-6 font-display font-bold text-muted underline underline-offset-4 hover:text-foreground disabled:no-underline"
-          >
-            {done.has(0)
-              ? "Thanks — we'll keep you posted! 🎉"
-              : "Just keep me posted →"}
-          </button>
-
           <p className="text-xs text-muted font-semibold mt-8">
-            We&apos;ll email the address on your account. No charge today — packs
-            aren&apos;t live yet.
+            No charge today — we&apos;ll just send you an email when packs become
+            available.
           </p>
         </div>
       </main>

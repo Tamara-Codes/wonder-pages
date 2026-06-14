@@ -58,6 +58,9 @@ body {
   font-family: var(--font-body), system-ui, sans-serif;
   font-weight: 500;
   line-height: 1.6;
+  /* Decorative hero art bleeds past its column on purpose; clip (not hidden, so
+     the sticky header keeps working) stops it forcing horizontal scroll. */
+  overflow-x: clip;
 }
 
 .font-display {

@@ -37,6 +37,10 @@ export interface Difficulty {
   // ── Coloring tuning ───────────────────────────────────────────
   /** Complexity phrase appended to the coloring-page prompt. */
   coloringStyle: string;
+
+  // ── Spot the Difference tuning ────────────────────────────────
+  /** How many differences to make between the two scenes. */
+  diffCount: number;
 }
 
 export const DIFFICULTIES: Difficulty[] = [
@@ -50,6 +54,7 @@ export const DIFFICULTIES: Difficulty[] = [
     findItSize: 0.11,
     findItSaturation: 1.0,
     findItPad: 0.45,
+    diffCount: 3,
     coloringStyle:
       "Very simple with only a few large bold shapes and extra-thick outlines, lots of open space, minimal detail — perfect for tiny hands.",
   },
@@ -63,6 +68,7 @@ export const DIFFICULTIES: Difficulty[] = [
     findItSize: 0.088,
     findItSaturation: 0.82,
     findItPad: 0.3,
+    diffCount: 5,
     coloringStyle:
       "Simple cute cartoon shapes with thick clean lines that are easy to color inside, a moderate amount of detail.",
   },
@@ -76,6 +82,7 @@ export const DIFFICULTIES: Difficulty[] = [
     findItSize: 0.07,
     findItSaturation: 0.66,
     findItPad: 0.18,
+    diffCount: 7,
     coloringStyle:
       "Moderately detailed with several distinct areas to color and clean medium-weight outlines — engaging for older children, but with comfortably sized spaces and no tiny cramped details that are fiddly to color in.",
   },

@@ -2,14 +2,15 @@
 
 import { useRef, useState } from "react";
 import Link from "next/link";
-import type { GameRow, FoundItem } from "@/lib/types";
+import type { GameRow, FindItAnswer, FoundItem } from "@/lib/types";
 import { findItemDataUri } from "@/lib/sprites";
 import { THEME_MAP } from "@/lib/themes";
 import { PlayHeader } from "./coloring-canvas";
 import { Bulb } from "@/components/icons";
 
 export default function FindItGame({ game }: { game: GameRow }) {
-  const answer = game.answer_key;
+  // The dispatcher only renders this for find-it games, so the key is a FindItAnswer.
+  const answer = game.answer_key as FindItAnswer | null;
   const items = answer?.items ?? [];
   const imgRef = useRef<HTMLImageElement>(null);
   const [found, setFound] = useState<Set<string>>(new Set());

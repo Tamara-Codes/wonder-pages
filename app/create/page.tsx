@@ -19,6 +19,12 @@ import {
   Fish,
   Car,
   Crown,
+  SpotDiff,
+  Ghost,
+  Shell,
+  Paw,
+  Ball,
+  Candy,
 } from "@/components/icons";
 import type { ComponentType } from "react";
 import { SiteHeader } from "@/components/site-header";
@@ -28,11 +34,13 @@ type Icon = ComponentType<{ size?: number }>;
 const GAME_ICON: Record<GameId, Icon> = {
   coloring: Palette,
   "find-it": Search,
+  "spot-difference": SpotDiff,
 };
 
 const GAME_COLOR: Record<GameId, string> = {
   coloring: "#ff5ca8",
   "find-it": "#8a6cff",
+  "spot-difference": "#16b8a6",
 };
 
 const DIFFICULTY_COLOR: Record<DifficultyId, string> = {
@@ -48,6 +56,11 @@ const THEME_ICON: Record<ThemeId, Icon> = {
   dinosaurs: Dino,
   ocean: Fish,
   "race-cars": Car,
+  ghosts: Ghost,
+  mermaids: Shell,
+  animals: Paw,
+  sports: Ball,
+  sweets: Candy,
 };
 
 export default function CreatePage() {

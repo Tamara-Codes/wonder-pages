@@ -89,7 +89,7 @@ function GameCard({ game }: { game: GameRow }) {
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={game.image_url}
+            src={game.colored_url ?? game.image_url}
             alt={game.title}
             className="h-full w-full object-cover"
             loading="lazy"

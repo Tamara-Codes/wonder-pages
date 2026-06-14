@@ -8,12 +8,13 @@
 create table if not exists public.games (
   id          uuid primary key default gen_random_uuid(),
   user_id     uuid not null references auth.users (id) on delete cascade,
-  type        text not null check (type in ('coloring', 'find-it')),
+  type        text not null check (type in ('coloring', 'find-it', 'spot-difference')),
   theme       text not null,
   difficulty  text not null default 'medium' check (difficulty in ('easy', 'medium', 'hard')),
   title       text not null,
   image_url   text not null,
-  -- find-it: { x, y, w, h, imgW, imgH }; coloring: null
+  -- find-it:         { imgW, imgH, items:[{key,label,x,y,w,h}] }
+  -- spot-difference: { imgW, imgH, imageB, diffs:[{x,y,w,h}] }; coloring: null
   answer_key  jsonb,
   created_at  timestamptz not null default now()
 );
@@ -22,6 +23,22 @@ create table if not exists public.games (
 alter table public.games
   add column if not exists difficulty text not null default 'medium'
   check (difficulty in ('easy', 'medium', 'hard'));
+
+-- Coloring games: the child's saved colored version, kept alongside the blank
+-- line art in image_url (so the page can still be re-coloured or printed blank).
+-- Null until the child saves a coloring; other game types leave it null.
+alter table public.games
+  add column if not exists colored_url text;
+
+-- Widen the game type check to allow newer game types on databases created
+-- before they existed. Drop + recreate the named constraint.
+do $$
+begin
+  alter table public.games drop constraint if exists games_type_check;
+  alter table public.games
+    add constraint games_type_check
+    check (type in ('coloring', 'find-it', 'spot-difference'));
+end $$;
 
 create index if not exists games_user_id_created_idx
   on public.games (user_id, created_at desc);
@@ -65,9 +82,10 @@ on conflict (id) do nothing;
 -- ──────────────────────────────────────────────────────────────
 create table if not exists public.profiles (
   id          uuid primary key references auth.users (id) on delete cascade,
-  -- Launch free allowance (no live payments yet). Paid packs will add on top
-  -- once the business entity (obrt) is registered and Stripe goes live.
-  credits     integer not null default 3,
+  -- No free credits on login. The free tier is one game of each type for
+  -- anonymous users (see generate route); logging in is for buying token
+  -- packs. Starts at 0 — credits are only ever added by a paid purchase.
+  credits     integer not null default 0,
   created_at  timestamptz not null default now()
 );
 
@@ -171,3 +189,19 @@ drop policy if exists "own waitlist — insert" on public.waitlist;
 create policy "own waitlist — insert" on public.waitlist
   for insert to authenticated
   with check (user_id = auth.uid());
+
+-- ──────────────────────────────────────────────────────────────
+-- notify_emails — landing-page email capture for upcoming features
+-- (e.g. the mailed keepsake booklet). No login required: rows are
+-- inserted server-side with the service-role key, so anonymous
+-- visitors work. RLS on with no policy = no client access.
+-- ──────────────────────────────────────────────────────────────
+create table if not exists public.notify_emails (
+  id          uuid primary key default gen_random_uuid(),
+  email       text not null,
+  source      text,                 -- where they signed up, e.g. 'booklet'
+  created_at  timestamptz not null default now(),
+  constraint notify_emails_email_uniq unique (email)
+);
+
+alter table public.notify_emails enable row level security;

@@ -41,10 +41,109 @@ export async function generateImage(prompt: string): Promise<Buffer> {
   throw new Error("Gemini returned no image data for the prompt.");
 }
 
+/**
+ * Edit an existing image from a text instruction (image-to-image). Used by
+ * Spot the Difference to make scene B by removing a few elements from scene A.
+ */
+export async function editImage(
+  image: Buffer,
+  instruction: string,
+  mimeType = "image/png",
+): Promise<Buffer> {
+  const response = await ai().models.generateContent({
+    model: IMAGE_MODEL,
+    contents: [
+      {
+        role: "user",
+        parts: [
+          { inlineData: { mimeType, data: image.toString("base64") } },
+          { text: instruction },
+        ],
+      },
+    ],
+  });
+
+  const parts = response.candidates?.[0]?.content?.parts ?? [];
+  for (const part of parts) {
+    if (part.inlineData?.data) return Buffer.from(part.inlineData.data, "base64");
+  }
+  throw new Error("Gemini returned no edited image.");
+}
+
 /** One detected object: a normalized [ymin, xmin, ymax, xmax] box (0–1000). */
 export interface DetectedBox {
   label: string;
   box: [number, number, number, number];
+}
+
+/** Parse a Gemini detection reply (named-edge boxes, tolerant of prose/fences). */
+function parseBoxes(text: string): DetectedBox[] {
+  const match = text.match(/\[[\s\S]*\]/);
+  if (!match) return [];
+  let raw: unknown;
+  try {
+    raw = JSON.parse(match[0]);
+  } catch {
+    return [];
+  }
+  if (!Array.isArray(raw)) return [];
+  const num = (v: unknown) => (typeof v === "number" ? v : Number(v));
+  const ok = (n: number) => Number.isFinite(n);
+  const out: DetectedBox[] = [];
+  for (const entry of raw) {
+    if (!entry || typeof entry !== "object") continue;
+    const e = entry as Record<string, unknown>;
+    const label = typeof e.label === "string" ? e.label : undefined;
+    if (!label) continue;
+    if (e.xmin != null && e.ymin != null && e.xmax != null && e.ymax != null) {
+      const ymin = num(e.ymin),
+        xmin = num(e.xmin),
+        ymax = num(e.ymax),
+        xmax = num(e.xmax);
+      if ([ymin, xmin, ymax, xmax].every(ok)) {
+        out.push({ label, box: [ymin, xmin, ymax, xmax] });
+      }
+    }
+  }
+  return out;
+}
+
+/**
+ * Open-vocabulary detection: list the distinct, separate elements in an image
+ * with boxes (0–1000). Used by Spot the Difference to discover what's in a
+ * generated scene so we can pick some at random to change — no fixed label list.
+ */
+export async function detectElements(
+  image: Buffer,
+  mimeType = "image/png",
+): Promise<DetectedBox[]> {
+  const prompt =
+    `List the distinct, separate visual elements in this image that a child could point to ` +
+    `(individual animals, characters, plants, trees, the sun, clouds, props, etc.). ` +
+    `Return ONLY a JSON array, no prose, no markdown, no code fences. ` +
+    `For EACH element output an object with EXACTLY these keys: "label", "xmin", "ymin", "xmax", "ymax". ` +
+    `The four numbers are integers from 0 to 1000 (x runs left→right, y runs top→bottom). ` +
+    `Do NOT use a "box_2d" array. Follow this exact format:\n` +
+    `[{"label":"cow","xmin":120,"ymin":60,"xmax":300,"ymax":240}]\n` +
+    `Give a TIGHT box around each element. Do not include the sky or the ground/grass background ` +
+    `itself. List up to 24 of the clearest, most separated elements.`;
+
+  const response = await ai().models.generateContent({
+    model: DETECT_MODEL,
+    contents: [
+      {
+        role: "user",
+        parts: [
+          { inlineData: { mimeType, data: image.toString("base64") } },
+          { text: prompt },
+        ],
+      },
+    ],
+  });
+  const parts = response.candidates?.[0]?.content?.parts ?? [];
+  let text = "";
+  for (const part of parts) if (typeof part.text === "string") text += part.text;
+  return parseBoxes(text);
 }
 
 /**

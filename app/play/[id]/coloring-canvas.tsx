@@ -17,9 +17,17 @@ const TOLERANCE = 48; // flood-fill color match tolerance
 
 type Tool = "fill" | "brush" | "eraser";
 
+const SAVE_LABEL: Record<"idle" | "saving" | "saved" | "error", string> = {
+  idle: "Save",
+  saving: "Saving…",
+  saved: "Saved!",
+  error: "Try again",
+};
+
 export default function ColoringCanvas({ game }: { game: GameRow }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
+  const blankImg = useRef<HTMLImageElement | null>(null); // blank line art, for Restart
   const undoStack = useRef<ImageData[]>([]);
   const drawing = useRef(false);
   const last = useRef<{ x: number; y: number } | null>(null);
@@ -28,36 +36,58 @@ export default function ColoringCanvas({ game }: { game: GameRow }) {
   const [tool, setTool] = useState<Tool>("fill");
   const [brush, setBrush] = useState(14);
   const [loaded, setLoaded] = useState(false);
+  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">(
+    "idle",
+  );
 
-  // Load the line art onto the canvas.
+  // Load the blank line art (sizing the canvas and keeping it for Restart), then
+  // paint any previously-saved coloring on top so the child continues where they
+  // left off.
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+    let cancelled = false;
 
-    const paint = (img: HTMLImageElement) => {
-      const scale = Math.min(1, MAX_DIM / Math.max(img.width, img.height));
-      canvas.width = Math.round(img.width * scale);
-      canvas.height = Math.round(img.height * scale);
+    // Prefer a CORS-clean load (so saving/printing works); fall back to a plain
+    // load if CORS blocks it, leaving a tainted canvas the browser can't export.
+    const load = (src: string) =>
+      new Promise<HTMLImageElement>((resolve, reject) => {
+        const tryLoad = (crossOrigin: boolean) => {
+          const img = new Image();
+          if (crossOrigin) img.crossOrigin = "anonymous";
+          img.onload = () => resolve(img);
+          img.onerror = () => (crossOrigin ? tryLoad(false) : reject());
+          img.src = src;
+        };
+        tryLoad(true);
+      });
+
+    (async () => {
+      const blank = await load(game.image_url).catch(() => null);
+      if (cancelled || !blank) return;
+      blankImg.current = blank;
+
+      const scale = Math.min(1, MAX_DIM / Math.max(blank.width, blank.height));
+      canvas.width = Math.round(blank.width * scale);
+      canvas.height = Math.round(blank.height * scale);
       const ctx = canvas.getContext("2d", { willReadFrequently: true })!;
+      ctxRef.current = ctx;
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      ctxRef.current = ctx;
-      setLoaded(true);
-    };
+      ctx.drawImage(blank, 0, 0, canvas.width, canvas.height);
 
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.onload = () => paint(img);
-    // If CORS blocks the cross-origin load, retry without it so the page still
-    // works (saving/printing may be unavailable on a tainted canvas).
-    img.onerror = () => {
-      const fallback = new Image();
-      fallback.onload = () => paint(fallback);
-      fallback.src = game.image_url;
+      if (game.colored_url) {
+        const colored = await load(game.colored_url).catch(() => null);
+        if (cancelled) return;
+        if (colored) ctx.drawImage(colored, 0, 0, canvas.width, canvas.height);
+      }
+      setLoaded(true);
+    })();
+
+    return () => {
+      cancelled = true;
     };
-    img.src = game.image_url;
-  }, [game.image_url]);
+  }, [game.image_url, game.colored_url]);
 
   const snapshot = useCallback(() => {
     const ctx = ctxRef.current;
@@ -72,6 +102,18 @@ export default function ColoringCanvas({ game }: { game: GameRow }) {
     const prev = undoStack.current.pop();
     if (ctx && prev) ctx.putImageData(prev, 0, 0);
   }, []);
+
+  // Wipe back to the blank line art (one undo step keeps it reversible).
+  const restart = useCallback(() => {
+    const ctx = ctxRef.current;
+    const canvas = canvasRef.current;
+    const blank = blankImg.current;
+    if (!ctx || !canvas || !blank) return;
+    snapshot();
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(blank, 0, 0, canvas.width, canvas.height);
+  }, [snapshot]);
 
   function toCanvasPoint(e: React.PointerEvent) {
     const canvas = canvasRef.current!;
@@ -157,14 +199,30 @@ export default function ColoringCanvas({ game }: { game: GameRow }) {
     last.current = { x, y };
   }
 
-  function download() {
+  // Save the current painting into My Games (the colored copy), keeping the
+  // blank line art so it can still be re-coloured or printed.
+  const save = useCallback(async () => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
-    const a = document.createElement("a");
-    a.download = `${game.title.replace(/\s+/g, "-").toLowerCase()}.png`;
-    a.href = canvas.toDataURL("image/png");
-    a.click();
-  }
+    if (!canvas || saveState === "saving") return;
+    setSaveState("saving");
+    try {
+      const blob = await new Promise<Blob | null>((resolve) =>
+        canvas.toBlob(resolve, "image/png"),
+      );
+      if (!blob) throw new Error("export failed"); // tainted canvas → toBlob is null
+      const res = await fetch(`/api/games/${game.id}/colored`, {
+        method: "POST",
+        headers: { "Content-Type": "image/png" },
+        body: blob,
+      });
+      if (!res.ok) throw new Error("save failed");
+      setSaveState("saved");
+      setTimeout(() => setSaveState("idle"), 2000);
+    } catch {
+      setSaveState("error");
+      setTimeout(() => setSaveState("idle"), 3000);
+    }
+  }, [game.id, saveState]);
 
   return (
     <div className="flex flex-col min-h-full">
@@ -192,7 +250,13 @@ export default function ColoringCanvas({ game }: { game: GameRow }) {
               <ToolButton active={tool === "eraser"} label="Eraser" icon={<IconEraser />} onClick={() => setTool("eraser")} />
               <span className="mx-1 h-7 w-px bg-border" />
               <ToolButton label="Undo" icon={<IconUndo />} onClick={undo} />
-              <ToolButton label="Save" icon={<IconDownload />} onClick={download} />
+              <ToolButton label="Restart" icon={<IconRestart />} onClick={restart} />
+              <ToolButton
+                label={SAVE_LABEL[saveState]}
+                icon={saveState === "saved" ? <IconCheck /> : <IconSave />}
+                onClick={save}
+                disabled={saveState === "saving"}
+              />
               <ToolButton label="Print" icon={<IconPrint />} onClick={() => window.print()} />
             </div>
 
@@ -259,18 +323,21 @@ function ToolButton({
   icon,
   label,
   active,
+  disabled,
   onClick,
 }: {
   icon: React.ReactNode;
   label: string;
   active?: boolean;
+  disabled?: boolean;
   onClick: () => void;
 }) {
   return (
     <button
       onClick={onClick}
+      disabled={disabled}
       title={label}
-      className={`font-display font-bold text-sm rounded-full px-4 py-2.5 lift-sm inline-flex items-center gap-2 ${
+      className={`font-display font-bold text-sm rounded-full px-4 py-2.5 lift-sm inline-flex items-center gap-2 disabled:opacity-60 disabled:pointer-events-none ${
         active
           ? "bg-brand text-white shadow-pop-sm"
           : "bg-card text-foreground shadow-pop-sm"
@@ -327,11 +394,22 @@ const IconUndo = () => (
     <path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11" />
   </Icon>
 );
-const IconDownload = () => (
+const IconRestart = () => (
   <Icon>
-    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-    <path d="m7 10 5 5 5-5" />
-    <path d="M12 15V3" />
+    <path d="M3 12a9 9 0 1 0 3-6.7L3 8" />
+    <path d="M3 3v5h5" />
+  </Icon>
+);
+const IconSave = () => (
+  <Icon>
+    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z" />
+    <path d="M17 21v-8H7v8" />
+    <path d="M7 3v5h8" />
+  </Icon>
+);
+const IconCheck = () => (
+  <Icon>
+    <path d="M20 6 9 17l-5-5" />
   </Icon>
 );
 const IconPrint = () => (

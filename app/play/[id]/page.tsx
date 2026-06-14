@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { GameRow } from "@/lib/types";
 import ColoringCanvas from "./coloring-canvas";
 import FindItGame from "./find-it-game";
+import SpotDifferenceGame from "./spot-difference-game";
 
 export default async function PlayPage({
   params,
@@ -22,9 +23,12 @@ export default async function PlayPage({
   if (!data) notFound();
   const game = data as GameRow;
 
-  return game.type === "coloring" ? (
-    <ColoringCanvas game={game} />
-  ) : (
-    <FindItGame game={game} />
-  );
+  switch (game.type) {
+    case "coloring":
+      return <ColoringCanvas game={game} />;
+    case "spot-difference":
+      return <SpotDifferenceGame game={game} />;
+    default:
+      return <FindItGame game={game} />;
+  }
 }

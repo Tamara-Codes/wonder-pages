@@ -1,4 +1,4 @@
-export type GameId = "coloring" | "find-it";
+export type GameId = "coloring" | "find-it" | "spot-difference";
 
 export interface Game {
   id: GameId;
@@ -35,6 +35,17 @@ export const GAMES: Game[] = [
       "A busy scene packed with surprises. Your child ticks off every hidden item on the list — a search-and-find adventure.",
     ages: "Ages 4–9",
     badge: "Quick to play",
+    available: true,
+  },
+  {
+    id: "spot-difference",
+    name: "Spot the Difference",
+    emoji: "🔎",
+    tagline: "Find what changed",
+    description:
+      "Two almost-matching scenes, side by side. A few things have quietly changed — your child hunts down every difference.",
+    ages: "Ages 4–9",
+    badge: "Sharp eyes",
     available: true,
   },
 ];
