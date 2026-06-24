@@ -1,4 +1,9 @@
-export type GameId = "coloring" | "find-it" | "spot-difference";
+export type GameId =
+  | "coloring"
+  | "maze"
+  | "match-pairs"
+  | "tracing"
+  | "odd-one-out";
 
 export interface Game {
   id: GameId;
@@ -27,25 +32,47 @@ export const GAMES: Game[] = [
     available: true,
   },
   {
-    id: "find-it",
-    name: "Find It!",
-    emoji: "🔍",
-    tagline: "Hunt the hidden things",
+    id: "maze",
+    name: "Maze",
+    emoji: "🌀",
+    tagline: "Find your way out",
     description:
-      "A busy scene packed with surprises. Your child ticks off every hidden item on the list — a search-and-find adventure.",
+      "A twisting path from start to finish. Your child traces the one true route through the maze with a finger — no dead end too tricky.",
     ages: "Ages 4–9",
-    badge: "Quick to play",
+    badge: "Trace the path",
     available: true,
   },
   {
-    id: "spot-difference",
-    name: "Spot the Difference",
-    emoji: "🔎",
-    tagline: "Find what changed",
+    id: "match-pairs",
+    name: "Match the Pairs",
+    emoji: "🧩",
+    tagline: "What goes together?",
     description:
-      "Two almost-matching scenes, side by side. A few things have quietly changed — your child hunts down every difference.",
+      "Two columns of pictures: a bee and a flower, a fish and a pond, a key and a lock. Your child draws a line joining each thing to the one it belongs with.",
+    ages: "Ages 3–6",
+    badge: "Match & connect",
+    available: true,
+  },
+  {
+    id: "tracing",
+    name: "Tracing",
+    emoji: "✏️",
+    tagline: "Trace the lines",
+    description:
+      "Dashed lines, hills, waves and loops to trace over. Your child follows each one from the green dot to the end — the hand control that handwriting starts with.",
+    ages: "Ages 3–6",
+    badge: "Pencil control",
+    available: true,
+  },
+  {
+    id: "odd-one-out",
+    name: "Odd One Out",
+    emoji: "🔎",
+    tagline: "Which one doesn't belong?",
+    description:
+      "Little groups of pictures — four that go together and one that doesn't, like four flowers and a bee. Your child spots the odd one in each group.",
     ages: "Ages 4–9",
-    badge: "Sharp eyes",
+    badge: "Think & sort",
     available: true,
   },
 ];

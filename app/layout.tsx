@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Baloo_2, Nunito, Fredoka } from "next/font/google";
+import { Baloo_2, Nunito, Fredoka, Caveat } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const baloo = Baloo_2({
@@ -20,10 +21,17 @@ const fredoka = Fredoka({
   weight: ["400", "500", "600", "700"],
 });
 
+// Casual handwritten script for the "A is for" / "A kao" connective.
+const caveat = Caveat({
+  variable: "--font-hand",
+  subsets: ["latin"],
+  weight: ["600", "700"],
+});
+
 export const metadata: Metadata = {
-  title: "Wonder Pages — Personalized printable games for kids",
+  title: "Moja slova — personalizirana abeceda za djecu",
   description:
-    "Pick a game style, add a world your child loves, and Wonder Pages creates a one-of-a-kind printable activity game to play or print today. First game free, no sign-up needed.",
+    "Personalizirana prva abeceda za djecu od 3 do 6 godina: za svako slovo listić za bojanje, sličicu i crte za pisanje, u poklon-kutiji s imenom djeteta.",
 };
 
 export default function RootLayout({
@@ -33,10 +41,13 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
-      className={`${baloo.variable} ${nunito.variable} ${fredoka.variable} h-full antialiased`}
+      lang="hr"
+      className={`${baloo.variable} ${nunito.variable} ${fredoka.variable} ${caveat.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }

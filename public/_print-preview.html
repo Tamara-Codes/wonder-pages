@@ -1,0 +1,373 @@
+<!doctype html><html lang="hr"><head><meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Fredoka:wght@400;500;600;700&family=Nunito:wght@700;800&family=Caveat:wght@700&display=swap" rel="stylesheet">
+<style>:root{--font-display:'Baloo 2';--font-label:'Fredoka';--font-body:'Nunito';--font-hand:'Caveat';}
+  @page { size: A5; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #fffbf2; }
+
+  .leaf {
+    width: 148mm; height: 210mm; overflow: hidden; position: relative;
+    background: #fff; display: flex; align-items: stretch; justify-content: stretch;
+  }
+
+  /* Letter page (A–Ž) */
+  .lp { flex: 1; display: flex; flex-direction: column; padding: 14mm 16mm; }
+  .lp-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: center; gap: 3mm 5mm; }
+  .lp-letter {
+    font-family: var(--font-display), 'Baloo 2', sans-serif; font-weight: 800;
+    font-size: 19mm; line-height: 1; color: #fff;
+    -webkit-text-stroke: 0.75mm #000000; paint-order: stroke fill;
+  }
+  /* Digraphs (Lj, Dž, Nj) are two glyphs — render a touch smaller to balance. */
+  .lp-letter--dg { font-size: 14mm; -webkit-text-stroke-width: 0.6mm; }
+  .lp-con { font-family: var(--font-hand), 'Caveat', cursive; font-weight: 700; font-size: 11mm; line-height: 1; color: #000000; }
+  /* The word is HOLLOW too, so the child can colour it in (like the big letter). */
+  .lp-word {
+    font-family: var(--font-display), 'Baloo 2', sans-serif; font-weight: 800;
+    font-size: 19mm; line-height: 1; letter-spacing: 0.3mm;
+    color: #fff; -webkit-text-stroke: 0.7mm #000000; paint-order: stroke fill;
+  }
+  /* Every picture is capped to the SAME square footprint (78×78mm) so all
+     pages read at a consistent size — a wide fish and a tall princess now
+     occupy the same area, not wildly different ones. */
+  .lp-pic { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; margin: 3mm 0; overflow: hidden; }
+  .lp-pic img, .lp-pic svg { max-width: 78mm; max-height: 78mm; width: auto; height: auto; object-fit: contain; }
+  .lp-hand { width: 100%; }
+  .lp-foot { margin-top: 3mm; text-align: center; font-family: var(--font-body), 'Nunito', sans-serif; font-weight: 700; font-size: 3mm; letter-spacing: 1.4mm; text-transform: uppercase; color: #7a7392; }
+  .lp-pageno { position: absolute; bottom: 8mm; right: 12mm; font-family: var(--font-body), 'Nunito', sans-serif; font-weight: 700; font-size: 3.4mm; color: #7a7392; }
+
+  /* Cover */
+  .cover {
+    flex: 1; margin: 11mm; border: 0.8mm solid #000000; border-radius: 6mm;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 8mm; padding: 14mm; text-align: center;
+  }
+  .cover-abc {
+    font-family: var(--font-display), 'Baloo 2', sans-serif; font-weight: 800;
+    font-size: 52mm; line-height: 1; letter-spacing: 3mm; padding-left: 3mm;
+    color: #fff; -webkit-text-stroke: 2mm #000000; paint-order: stroke fill;
+  }
+  .cover-name { font-family: var(--font-display), 'Baloo 2', sans-serif; font-weight: 800; font-size: 24mm; line-height: 1.05; color: #000000; }
+  .cover-sub { font-family: var(--font-hand), 'Caveat', cursive; font-weight: 700; font-size: 15mm; color: #000000; }
+
+  /* Keepsake (confetti) leaves */
+  .pop {
+    flex: 1; position: relative; overflow: hidden; background: #fff;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 24mm 18mm;
+  }
+  .cf { position: absolute; }
+  .pop-in { position: relative; display: flex; flex-direction: column; align-items: center; width: 100%; }
+  .tile { width: 17mm; height: 17mm; border-radius: 5mm; display: grid; place-items: center; }
+  .tile-i { width: 8mm; height: 8mm; }
+
+  /* Screen-only book-preview chrome — never printed */
+  @media screen {
+    body { padding: 24px 0; }
+    .leaf { margin: 0 auto 20px; box-shadow: 0 8px 30px rgba(43,36,64,.16); }
+  }
+  @media print {
+    .leaf { box-shadow: none; page-break-after: always; break-after: page; }
+    .leaf:last-child { page-break-after: auto; break-after: auto; }
+  }
+</style>
+</head><body><section class="leaf"><div class="cover">
+    <div class="cover-abc">ABC</div>
+    <div class="cover-name">Ema</div>
+    <div class="cover-sub">moja prva slova</div>
+  </div></section><section class="leaf"><div class="pop"><span class="cf" style="left:6%;top:7%;width:3.2mm;height:3.2mm;border-radius:50%;background:#ff5ca8;"></span><span class="cf" style="right:8%;top:8%;width:3mm;height:3mm;border-radius:0.6mm;background:#ffc93c;transform:rotate(22deg);"></span><span class="cf" style="left:46%;top:5%;width:1.8mm;height:1.8mm;border-radius:50%;background:#21c7b6;"></span><span class="cf" style="right:18%;top:18%;width:2mm;height:2mm;border-radius:50%;background:#8a6cff;"></span><span class="cf" style="left:9%;top:22%;width:2mm;height:2mm;border-radius:0.6mm;background:#ff5ca8;transform:rotate(22deg);"></span><span class="cf" style="left:5%;top:42%;width:2.6mm;height:2.6mm;border-radius:50%;background:#ffc93c;"></span><span class="cf" style="right:5%;top:38%;width:2mm;height:2mm;border-radius:50%;background:#21c7b6;"></span><span class="cf" style="left:6%;top:58%;width:2mm;height:2mm;border-radius:0.6mm;background:#8a6cff;transform:rotate(22deg);"></span><span class="cf" style="right:6%;top:55%;width:2.3mm;height:2.3mm;border-radius:50%;background:#ff5ca8;"></span><span class="cf" style="right:7%;top:72%;width:1.8mm;height:1.8mm;border-radius:50%;background:#ffc93c;"></span><span class="cf" style="left:8%;top:74%;width:2mm;height:2mm;border-radius:50%;background:#21c7b6;"></span><span class="cf" style="left:8%;bottom:8%;width:3mm;height:3mm;border-radius:50%;background:#8a6cff;"></span><span class="cf" style="right:9%;bottom:9%;width:2.3mm;height:2.3mm;border-radius:0.6mm;background:#21c7b6;transform:rotate(22deg);"></span><span class="cf" style="left:48%;bottom:6%;width:2mm;height:2mm;border-radius:50%;background:#ff5ca8;"></span><span class="cf" style="right:18%;bottom:16%;width:1.8mm;height:1.8mm;border-radius:50%;background:#ffc93c;"></span><span class="cf" style="left:16%;bottom:17%;width:1.8mm;height:1.8mm;border-radius:0.6mm;background:#ff5ca8;transform:rotate(22deg);"></span>
+    <div class="pop-in" style="gap:6mm"><div style="font-family:var(--font-hand),'Caveat',cursive;font-size:9mm;color:#2b2440;line-height:1.5;white-space:pre-wrap;max-width:24ch;">Draga Ema,
+sretan prvi rođendan!
+Volimo te,
+mama i tata</div></div>
+  </div></section><section class="leaf"><div class="lp">
+    <div class="lp-head">
+      <span class="lp-letter">A</span>
+      <span class="lp-con">kao</span>
+      <span class="lp-word">AVION</span>
+    </div>
+    <div class="lp-pic"><img src="/icons-art/airplane.png?v=1781813822993" alt="" /></div>
+    <svg class="lp-hand" viewBox="0 0 120 44" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="1" y1="16" x2="119" y2="16" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/><text x="10.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">A</text><text x="30.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">A</text><text x="50.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">A</text><text x="70.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">A</text><text x="90.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">A</text><text x="110.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">A</text><line x1="1" y1="40" x2="119" y2="40" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/></svg>
+    <div class="lp-foot">moja prva slova · EMA</div>
+  </div><div class="lp-pageno">1</div></section><section class="leaf"><div class="lp">
+    <div class="lp-head">
+      <span class="lp-letter">B</span>
+      <span class="lp-con">kao</span>
+      <span class="lp-word">BANANA</span>
+    </div>
+    <div class="lp-pic"><img src="/icons-art/banana.png?v=1781813822993" alt="" /></div>
+    <svg class="lp-hand" viewBox="0 0 120 44" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="1" y1="16" x2="119" y2="16" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/><text x="10.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">B</text><text x="30.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">B</text><text x="50.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">B</text><text x="70.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">B</text><text x="90.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">B</text><text x="110.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">B</text><line x1="1" y1="40" x2="119" y2="40" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/></svg>
+    <div class="lp-foot">moja prva slova · EMA</div>
+  </div><div class="lp-pageno">2</div></section><section class="leaf"><div class="lp">
+    <div class="lp-head">
+      <span class="lp-letter">C</span>
+      <span class="lp-con">kao</span>
+      <span class="lp-word">CIPELA</span>
+    </div>
+    <div class="lp-pic"><img src="/icons-art/shoe.png?v=1781813822993" alt="" /></div>
+    <svg class="lp-hand" viewBox="0 0 120 44" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="1" y1="16" x2="119" y2="16" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/><text x="10.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">C</text><text x="30.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">C</text><text x="50.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">C</text><text x="70.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">C</text><text x="90.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">C</text><text x="110.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">C</text><line x1="1" y1="40" x2="119" y2="40" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/></svg>
+    <div class="lp-foot">moja prva slova · EMA</div>
+  </div><div class="lp-pageno">3</div></section><section class="leaf"><div class="lp">
+    <div class="lp-head">
+      <span class="lp-letter">Č</span>
+      <span class="lp-con">kao</span>
+      <span class="lp-word">ČARAPA</span>
+    </div>
+    <div class="lp-pic"><img src="/icons-art/socks.png?v=1781813822993" alt="" /></div>
+    <svg class="lp-hand" viewBox="0 0 120 44" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="1" y1="16" x2="119" y2="16" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/><text x="10.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Č</text><text x="30.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Č</text><text x="50.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Č</text><text x="70.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Č</text><text x="90.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Č</text><text x="110.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Č</text><line x1="1" y1="40" x2="119" y2="40" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/></svg>
+    <div class="lp-foot">moja prva slova · EMA</div>
+  </div><div class="lp-pageno">4</div></section><section class="leaf"><div class="lp">
+    <div class="lp-head">
+      <span class="lp-letter">Ć</span>
+      <span class="lp-con">kao</span>
+      <span class="lp-word">ĆUP</span>
+    </div>
+    <div class="lp-pic"><img src="/icons-art/jug.png?v=1781813822993" alt="" /></div>
+    <svg class="lp-hand" viewBox="0 0 120 44" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="1" y1="16" x2="119" y2="16" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/><text x="10.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Ć</text><text x="30.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Ć</text><text x="50.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Ć</text><text x="70.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Ć</text><text x="90.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Ć</text><text x="110.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Ć</text><line x1="1" y1="40" x2="119" y2="40" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/></svg>
+    <div class="lp-foot">moja prva slova · EMA</div>
+  </div><div class="lp-pageno">5</div></section><section class="leaf"><div class="lp">
+    <div class="lp-head">
+      <span class="lp-letter">D</span>
+      <span class="lp-con">kao</span>
+      <span class="lp-word">DELFIN</span>
+    </div>
+    <div class="lp-pic"><img src="/icons-art/dolphin.png?v=1781813822993" alt="" /></div>
+    <svg class="lp-hand" viewBox="0 0 120 44" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="1" y1="16" x2="119" y2="16" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/><text x="10.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">D</text><text x="30.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">D</text><text x="50.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">D</text><text x="70.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">D</text><text x="90.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">D</text><text x="110.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">D</text><line x1="1" y1="40" x2="119" y2="40" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/></svg>
+    <div class="lp-foot">moja prva slova · EMA</div>
+  </div><div class="lp-pageno">6</div></section><section class="leaf"><div class="lp">
+    <div class="lp-head">
+      <span class="lp-letter lp-letter--dg">Dž</span>
+      <span class="lp-con">kao</span>
+      <span class="lp-word">DŽEM</span>
+    </div>
+    <div class="lp-pic"><img src="/icons-art/jam.png?v=1781813822993" alt="" /></div>
+    <svg class="lp-hand" viewBox="0 0 120 44" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="1" y1="16" x2="119" y2="16" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/><text x="15.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Dž</text><text x="45.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Dž</text><text x="75.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Dž</text><text x="105.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Dž</text><line x1="1" y1="40" x2="119" y2="40" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/></svg>
+    <div class="lp-foot">moja prva slova · EMA</div>
+  </div><div class="lp-pageno">7</div></section><section class="leaf"><div class="lp">
+    <div class="lp-head">
+      <span class="lp-letter">Đ</span>
+      <span class="lp-con">kao</span>
+      <span class="lp-word">ĐAK</span>
+    </div>
+    <div class="lp-pic"><img src="/icons-art/pupil.png?v=1781813822993" alt="" /></div>
+    <svg class="lp-hand" viewBox="0 0 120 44" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="1" y1="16" x2="119" y2="16" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/><text x="10.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Đ</text><text x="30.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Đ</text><text x="50.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Đ</text><text x="70.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Đ</text><text x="90.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Đ</text><text x="110.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Đ</text><line x1="1" y1="40" x2="119" y2="40" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/></svg>
+    <div class="lp-foot">moja prva slova · EMA</div>
+  </div><div class="lp-pageno">8</div></section><section class="leaf"><div class="lp">
+    <div class="lp-head">
+      <span class="lp-letter">E</span>
+      <span class="lp-con">kao</span>
+      <span class="lp-word">ELISA</span>
+    </div>
+    <div class="lp-pic"><img src="/icons-art/propeller.png?v=1781813822993" alt="" /></div>
+    <svg class="lp-hand" viewBox="0 0 120 44" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="1" y1="16" x2="119" y2="16" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/><text x="10.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">E</text><text x="30.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">E</text><text x="50.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">E</text><text x="70.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">E</text><text x="90.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">E</text><text x="110.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">E</text><line x1="1" y1="40" x2="119" y2="40" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/></svg>
+    <div class="lp-foot">moja prva slova · EMA</div>
+  </div><div class="lp-pageno">9</div></section><section class="leaf"><div class="lp">
+    <div class="lp-head">
+      <span class="lp-letter">F</span>
+      <span class="lp-con">kao</span>
+      <span class="lp-word">FRULA</span>
+    </div>
+    <div class="lp-pic"><img src="/icons-art/flute.png?v=1781813822993" alt="" /></div>
+    <svg class="lp-hand" viewBox="0 0 120 44" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="1" y1="16" x2="119" y2="16" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/><text x="10.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">F</text><text x="30.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">F</text><text x="50.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">F</text><text x="70.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">F</text><text x="90.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">F</text><text x="110.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">F</text><line x1="1" y1="40" x2="119" y2="40" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/></svg>
+    <div class="lp-foot">moja prva slova · EMA</div>
+  </div><div class="lp-pageno">10</div></section><section class="leaf"><div class="lp">
+    <div class="lp-head">
+      <span class="lp-letter">G</span>
+      <span class="lp-con">kao</span>
+      <span class="lp-word">GITARA</span>
+    </div>
+    <div class="lp-pic"><img src="/icons-art/guitar.png?v=1781813822993" alt="" /></div>
+    <svg class="lp-hand" viewBox="0 0 120 44" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="1" y1="16" x2="119" y2="16" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/><text x="10.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">G</text><text x="30.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">G</text><text x="50.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">G</text><text x="70.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">G</text><text x="90.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">G</text><text x="110.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">G</text><line x1="1" y1="40" x2="119" y2="40" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/></svg>
+    <div class="lp-foot">moja prva slova · EMA</div>
+  </div><div class="lp-pageno">11</div></section><section class="leaf"><div class="lp">
+    <div class="lp-head">
+      <span class="lp-letter">H</span>
+      <span class="lp-con">kao</span>
+      <span class="lp-word">HELIKOPTER</span>
+    </div>
+    <div class="lp-pic"><img src="/icons-art/helicopter.png?v=1781813822993" alt="" /></div>
+    <svg class="lp-hand" viewBox="0 0 120 44" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="1" y1="16" x2="119" y2="16" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/><text x="10.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">H</text><text x="30.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">H</text><text x="50.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">H</text><text x="70.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">H</text><text x="90.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">H</text><text x="110.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">H</text><line x1="1" y1="40" x2="119" y2="40" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/></svg>
+    <div class="lp-foot">moja prva slova · EMA</div>
+  </div><div class="lp-pageno">12</div></section><section class="leaf"><div class="lp">
+    <div class="lp-head">
+      <span class="lp-letter">I</span>
+      <span class="lp-con">kao</span>
+      <span class="lp-word">IGLA</span>
+    </div>
+    <div class="lp-pic"><img src="/icons-art/needle.png?v=1781813822993" alt="" /></div>
+    <svg class="lp-hand" viewBox="0 0 120 44" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="1" y1="16" x2="119" y2="16" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/><text x="10.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">I</text><text x="30.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">I</text><text x="50.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">I</text><text x="70.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">I</text><text x="90.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">I</text><text x="110.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">I</text><line x1="1" y1="40" x2="119" y2="40" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/></svg>
+    <div class="lp-foot">moja prva slova · EMA</div>
+  </div><div class="lp-pageno">13</div></section><section class="leaf"><div class="lp">
+    <div class="lp-head">
+      <span class="lp-letter">J</span>
+      <span class="lp-con">kao</span>
+      <span class="lp-word">JABUKA</span>
+    </div>
+    <div class="lp-pic"><img src="/icons-art/apple.png?v=1781813822993" alt="" /></div>
+    <svg class="lp-hand" viewBox="0 0 120 44" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="1" y1="16" x2="119" y2="16" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/><text x="10.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">J</text><text x="30.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">J</text><text x="50.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">J</text><text x="70.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">J</text><text x="90.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">J</text><text x="110.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">J</text><line x1="1" y1="40" x2="119" y2="40" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/></svg>
+    <div class="lp-foot">moja prva slova · EMA</div>
+  </div><div class="lp-pageno">14</div></section><section class="leaf"><div class="lp">
+    <div class="lp-head">
+      <span class="lp-letter">K</span>
+      <span class="lp-con">kao</span>
+      <span class="lp-word">KRAVA</span>
+    </div>
+    <div class="lp-pic"><img src="/icons-art/cow.png?v=1781813822993" alt="" /></div>
+    <svg class="lp-hand" viewBox="0 0 120 44" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="1" y1="16" x2="119" y2="16" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/><text x="10.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">K</text><text x="30.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">K</text><text x="50.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">K</text><text x="70.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">K</text><text x="90.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">K</text><text x="110.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">K</text><line x1="1" y1="40" x2="119" y2="40" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/></svg>
+    <div class="lp-foot">moja prva slova · EMA</div>
+  </div><div class="lp-pageno">15</div></section><section class="leaf"><div class="lp">
+    <div class="lp-head">
+      <span class="lp-letter">L</span>
+      <span class="lp-con">kao</span>
+      <span class="lp-word">LAV</span>
+    </div>
+    <div class="lp-pic"><img src="/icons-art/lion.png?v=1781813822993" alt="" /></div>
+    <svg class="lp-hand" viewBox="0 0 120 44" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="1" y1="16" x2="119" y2="16" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/><text x="10.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">L</text><text x="30.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">L</text><text x="50.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">L</text><text x="70.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">L</text><text x="90.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">L</text><text x="110.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">L</text><line x1="1" y1="40" x2="119" y2="40" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/></svg>
+    <div class="lp-foot">moja prva slova · EMA</div>
+  </div><div class="lp-pageno">16</div></section><section class="leaf"><div class="lp">
+    <div class="lp-head">
+      <span class="lp-letter lp-letter--dg">Lj</span>
+      <span class="lp-con">kao</span>
+      <span class="lp-word">LJULJAČKA</span>
+    </div>
+    <div class="lp-pic"><img src="/icons-art/swing.png?v=1781813822993" alt="" /></div>
+    <svg class="lp-hand" viewBox="0 0 120 44" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="1" y1="16" x2="119" y2="16" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/><text x="15.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Lj</text><text x="45.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Lj</text><text x="75.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Lj</text><text x="105.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Lj</text><line x1="1" y1="40" x2="119" y2="40" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/></svg>
+    <div class="lp-foot">moja prva slova · EMA</div>
+  </div><div class="lp-pageno">17</div></section><section class="leaf"><div class="lp">
+    <div class="lp-head">
+      <span class="lp-letter">M</span>
+      <span class="lp-con">kao</span>
+      <span class="lp-word">MEDO</span>
+    </div>
+    <div class="lp-pic"><img src="/icons-art/bear.png?v=1781813822993" alt="" /></div>
+    <svg class="lp-hand" viewBox="0 0 120 44" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="1" y1="16" x2="119" y2="16" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/><text x="10.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">M</text><text x="30.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">M</text><text x="50.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">M</text><text x="70.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">M</text><text x="90.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">M</text><text x="110.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">M</text><line x1="1" y1="40" x2="119" y2="40" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/></svg>
+    <div class="lp-foot">moja prva slova · EMA</div>
+  </div><div class="lp-pageno">18</div></section><section class="leaf"><div class="lp">
+    <div class="lp-head">
+      <span class="lp-letter">N</span>
+      <span class="lp-con">kao</span>
+      <span class="lp-word">NARANČA</span>
+    </div>
+    <div class="lp-pic"><img src="/icons-art/orange.png?v=1781813822993" alt="" /></div>
+    <svg class="lp-hand" viewBox="0 0 120 44" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="1" y1="16" x2="119" y2="16" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/><text x="10.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">N</text><text x="30.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">N</text><text x="50.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">N</text><text x="70.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">N</text><text x="90.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">N</text><text x="110.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">N</text><line x1="1" y1="40" x2="119" y2="40" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/></svg>
+    <div class="lp-foot">moja prva slova · EMA</div>
+  </div><div class="lp-pageno">19</div></section><section class="leaf"><div class="lp">
+    <div class="lp-head">
+      <span class="lp-letter lp-letter--dg">Nj</span>
+      <span class="lp-con">kao</span>
+      <span class="lp-word">NJUŠKA</span>
+    </div>
+    <div class="lp-pic"><img src="/icons-art/dog.png?v=1781813822993" alt="" /></div>
+    <svg class="lp-hand" viewBox="0 0 120 44" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="1" y1="16" x2="119" y2="16" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/><text x="15.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Nj</text><text x="45.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Nj</text><text x="75.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Nj</text><text x="105.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Nj</text><line x1="1" y1="40" x2="119" y2="40" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/></svg>
+    <div class="lp-foot">moja prva slova · EMA</div>
+  </div><div class="lp-pageno">20</div></section><section class="leaf"><div class="lp">
+    <div class="lp-head">
+      <span class="lp-letter">O</span>
+      <span class="lp-con">kao</span>
+      <span class="lp-word">OBLAK</span>
+    </div>
+    <div class="lp-pic"><img src="/icons-art/cloud.png?v=1781813822993" alt="" /></div>
+    <svg class="lp-hand" viewBox="0 0 120 44" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="1" y1="16" x2="119" y2="16" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/><text x="10.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">O</text><text x="30.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">O</text><text x="50.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">O</text><text x="70.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">O</text><text x="90.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">O</text><text x="110.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">O</text><line x1="1" y1="40" x2="119" y2="40" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/></svg>
+    <div class="lp-foot">moja prva slova · EMA</div>
+  </div><div class="lp-pageno">21</div></section><section class="leaf"><div class="lp">
+    <div class="lp-head">
+      <span class="lp-letter">P</span>
+      <span class="lp-con">kao</span>
+      <span class="lp-word">PRINCEZA</span>
+    </div>
+    <div class="lp-pic"><img src="/icons-art/princess.png?v=1781813822993" alt="" /></div>
+    <svg class="lp-hand" viewBox="0 0 120 44" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="1" y1="16" x2="119" y2="16" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/><text x="10.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">P</text><text x="30.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">P</text><text x="50.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">P</text><text x="70.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">P</text><text x="90.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">P</text><text x="110.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">P</text><line x1="1" y1="40" x2="119" y2="40" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/></svg>
+    <div class="lp-foot">moja prva slova · EMA</div>
+  </div><div class="lp-pageno">22</div></section><section class="leaf"><div class="lp">
+    <div class="lp-head">
+      <span class="lp-letter">R</span>
+      <span class="lp-con">kao</span>
+      <span class="lp-word">RIBA</span>
+    </div>
+    <div class="lp-pic"><img src="/icons-art/fish.png?v=1781813822993" alt="" /></div>
+    <svg class="lp-hand" viewBox="0 0 120 44" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="1" y1="16" x2="119" y2="16" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/><text x="10.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">R</text><text x="30.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">R</text><text x="50.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">R</text><text x="70.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">R</text><text x="90.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">R</text><text x="110.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">R</text><line x1="1" y1="40" x2="119" y2="40" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/></svg>
+    <div class="lp-foot">moja prva slova · EMA</div>
+  </div><div class="lp-pageno">23</div></section><section class="leaf"><div class="lp">
+    <div class="lp-head">
+      <span class="lp-letter">S</span>
+      <span class="lp-con">kao</span>
+      <span class="lp-word">SUNCE</span>
+    </div>
+    <div class="lp-pic"><img src="/icons-art/sun.png?v=1781813822993" alt="" /></div>
+    <svg class="lp-hand" viewBox="0 0 120 44" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="1" y1="16" x2="119" y2="16" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/><text x="10.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">S</text><text x="30.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">S</text><text x="50.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">S</text><text x="70.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">S</text><text x="90.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">S</text><text x="110.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">S</text><line x1="1" y1="40" x2="119" y2="40" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/></svg>
+    <div class="lp-foot">moja prva slova · EMA</div>
+  </div><div class="lp-pageno">24</div></section><section class="leaf"><div class="lp">
+    <div class="lp-head">
+      <span class="lp-letter">Š</span>
+      <span class="lp-con">kao</span>
+      <span class="lp-word">ŠEŠIR</span>
+    </div>
+    <div class="lp-pic"><img src="/icons-art/hat.png?v=1781813822993" alt="" /></div>
+    <svg class="lp-hand" viewBox="0 0 120 44" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="1" y1="16" x2="119" y2="16" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/><text x="10.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Š</text><text x="30.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Š</text><text x="50.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Š</text><text x="70.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Š</text><text x="90.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Š</text><text x="110.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Š</text><line x1="1" y1="40" x2="119" y2="40" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/></svg>
+    <div class="lp-foot">moja prva slova · EMA</div>
+  </div><div class="lp-pageno">25</div></section><section class="leaf"><div class="lp">
+    <div class="lp-head">
+      <span class="lp-letter">T</span>
+      <span class="lp-con">kao</span>
+      <span class="lp-word">TIGAR</span>
+    </div>
+    <div class="lp-pic"><img src="/icons-art/tiger.png?v=1781813822993" alt="" /></div>
+    <svg class="lp-hand" viewBox="0 0 120 44" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="1" y1="16" x2="119" y2="16" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/><text x="10.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">T</text><text x="30.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">T</text><text x="50.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">T</text><text x="70.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">T</text><text x="90.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">T</text><text x="110.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">T</text><line x1="1" y1="40" x2="119" y2="40" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/></svg>
+    <div class="lp-foot">moja prva slova · EMA</div>
+  </div><div class="lp-pageno">26</div></section><section class="leaf"><div class="lp">
+    <div class="lp-head">
+      <span class="lp-letter">U</span>
+      <span class="lp-con">kao</span>
+      <span class="lp-word">UDICA</span>
+    </div>
+    <div class="lp-pic"><img src="/icons-art/hook.png?v=1781813822993" alt="" /></div>
+    <svg class="lp-hand" viewBox="0 0 120 44" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="1" y1="16" x2="119" y2="16" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/><text x="10.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">U</text><text x="30.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">U</text><text x="50.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">U</text><text x="70.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">U</text><text x="90.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">U</text><text x="110.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">U</text><line x1="1" y1="40" x2="119" y2="40" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/></svg>
+    <div class="lp-foot">moja prva slova · EMA</div>
+  </div><div class="lp-pageno">27</div></section><section class="leaf"><div class="lp">
+    <div class="lp-head">
+      <span class="lp-letter">V</span>
+      <span class="lp-con">kao</span>
+      <span class="lp-word">VLAK</span>
+    </div>
+    <div class="lp-pic"><img src="/icons-art/train.png?v=1781813822993" alt="" /></div>
+    <svg class="lp-hand" viewBox="0 0 120 44" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="1" y1="16" x2="119" y2="16" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/><text x="10.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">V</text><text x="30.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">V</text><text x="50.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">V</text><text x="70.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">V</text><text x="90.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">V</text><text x="110.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">V</text><line x1="1" y1="40" x2="119" y2="40" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/></svg>
+    <div class="lp-foot">moja prva slova · EMA</div>
+  </div><div class="lp-pageno">28</div></section><section class="leaf"><div class="lp">
+    <div class="lp-head">
+      <span class="lp-letter">Z</span>
+      <span class="lp-con">kao</span>
+      <span class="lp-word">ZEC</span>
+    </div>
+    <div class="lp-pic"><img src="/icons-art/rabbit.png?v=1781813822993" alt="" /></div>
+    <svg class="lp-hand" viewBox="0 0 120 44" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="1" y1="16" x2="119" y2="16" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/><text x="10.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Z</text><text x="30.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Z</text><text x="50.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Z</text><text x="70.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Z</text><text x="90.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Z</text><text x="110.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Z</text><line x1="1" y1="40" x2="119" y2="40" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/></svg>
+    <div class="lp-foot">moja prva slova · EMA</div>
+  </div><div class="lp-pageno">29</div></section><section class="leaf"><div class="lp">
+    <div class="lp-head">
+      <span class="lp-letter">Ž</span>
+      <span class="lp-con">kao</span>
+      <span class="lp-word">ŽABA</span>
+    </div>
+    <div class="lp-pic"><img src="/icons-art/frog.png?v=1781813822993" alt="" /></div>
+    <svg class="lp-hand" viewBox="0 0 120 44" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="1" y1="16" x2="119" y2="16" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/><text x="10.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Ž</text><text x="30.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Ž</text><text x="50.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Ž</text><text x="70.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Ž</text><text x="90.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Ž</text><text x="110.0" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:#000000;fill-opacity:.08">Ž</text><line x1="1" y1="40" x2="119" y2="40" stroke="#000000" stroke-width="0.7" stroke-opacity=".8"/></svg>
+    <div class="lp-foot">moja prva slova · EMA</div>
+  </div><div class="lp-pageno">30</div></section><section class="leaf"><div class="pop"><span class="cf" style="left:6%;top:7%;width:3.2mm;height:3.2mm;border-radius:50%;background:#ff5ca8;"></span><span class="cf" style="right:8%;top:8%;width:3mm;height:3mm;border-radius:0.6mm;background:#ffc93c;transform:rotate(22deg);"></span><span class="cf" style="left:46%;top:5%;width:1.8mm;height:1.8mm;border-radius:50%;background:#21c7b6;"></span><span class="cf" style="right:18%;top:18%;width:2mm;height:2mm;border-radius:50%;background:#8a6cff;"></span><span class="cf" style="left:9%;top:22%;width:2mm;height:2mm;border-radius:0.6mm;background:#ff5ca8;transform:rotate(22deg);"></span><span class="cf" style="left:5%;top:42%;width:2.6mm;height:2.6mm;border-radius:50%;background:#ffc93c;"></span><span class="cf" style="right:5%;top:38%;width:2mm;height:2mm;border-radius:50%;background:#21c7b6;"></span><span class="cf" style="left:6%;top:58%;width:2mm;height:2mm;border-radius:0.6mm;background:#8a6cff;transform:rotate(22deg);"></span><span class="cf" style="right:6%;top:55%;width:2.3mm;height:2.3mm;border-radius:50%;background:#ff5ca8;"></span><span class="cf" style="right:7%;top:72%;width:1.8mm;height:1.8mm;border-radius:50%;background:#ffc93c;"></span><span class="cf" style="left:8%;top:74%;width:2mm;height:2mm;border-radius:50%;background:#21c7b6;"></span><span class="cf" style="left:8%;bottom:8%;width:3mm;height:3mm;border-radius:50%;background:#8a6cff;"></span><span class="cf" style="right:9%;bottom:9%;width:2.3mm;height:2.3mm;border-radius:0.6mm;background:#21c7b6;transform:rotate(22deg);"></span><span class="cf" style="left:48%;bottom:6%;width:2mm;height:2mm;border-radius:50%;background:#ff5ca8;"></span><span class="cf" style="right:18%;bottom:16%;width:1.8mm;height:1.8mm;border-radius:50%;background:#ffc93c;"></span><span class="cf" style="left:16%;bottom:17%;width:1.8mm;height:1.8mm;border-radius:0.6mm;background:#ff5ca8;transform:rotate(22deg);"></span>
+    <div class="pop-in" style="gap:5mm"><div class="tile" style="background:#21c7b6"><div class="tile-i"><svg viewBox="0 0 24 24" width="100%" height="100%" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="#fff"/></svg></div></div>
+     <div style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:800;font-size:6mm;letter-spacing:0.4mm;text-transform:uppercase;color:#16a596;line-height:1.1;">Moje ime</div>
+     <svg viewBox="0 0 400 130" style="width:100%" aria-hidden="true">
+    <text x="200" y="92" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:800;font-size:108px;fill:#fff;stroke:#16a596;stroke-width:5;stroke-linejoin:round;paint-order:stroke;">EMA</text>
+  </svg>
+     <div style="width:100%;"><svg viewBox="0 0 400 110" style="width:96%" aria-hidden="true"><line x1="6" y1="48" x2="394" y2="48" stroke="#16a596" stroke-width="2" stroke-opacity=".7"/><text x="200" y="46" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:38px;fill:#16a596;fill-opacity:.18">EMA</text><line x1="6" y1="96" x2="394" y2="96" stroke="#16a596" stroke-width="2" stroke-opacity=".7"/></svg></div></div>
+  </div></section><section class="leaf"><div class="pop"><span class="cf" style="left:6%;top:7%;width:3.2mm;height:3.2mm;border-radius:50%;background:#ff5ca8;"></span><span class="cf" style="right:8%;top:8%;width:3mm;height:3mm;border-radius:0.6mm;background:#ffc93c;transform:rotate(22deg);"></span><span class="cf" style="left:46%;top:5%;width:1.8mm;height:1.8mm;border-radius:50%;background:#21c7b6;"></span><span class="cf" style="right:18%;top:18%;width:2mm;height:2mm;border-radius:50%;background:#8a6cff;"></span><span class="cf" style="left:9%;top:22%;width:2mm;height:2mm;border-radius:0.6mm;background:#ff5ca8;transform:rotate(22deg);"></span><span class="cf" style="left:5%;top:42%;width:2.6mm;height:2.6mm;border-radius:50%;background:#ffc93c;"></span><span class="cf" style="right:5%;top:38%;width:2mm;height:2mm;border-radius:50%;background:#21c7b6;"></span><span class="cf" style="left:6%;top:58%;width:2mm;height:2mm;border-radius:0.6mm;background:#8a6cff;transform:rotate(22deg);"></span><span class="cf" style="right:6%;top:55%;width:2.3mm;height:2.3mm;border-radius:50%;background:#ff5ca8;"></span><span class="cf" style="right:7%;top:72%;width:1.8mm;height:1.8mm;border-radius:50%;background:#ffc93c;"></span><span class="cf" style="left:8%;top:74%;width:2mm;height:2mm;border-radius:50%;background:#21c7b6;"></span><span class="cf" style="left:8%;bottom:8%;width:3mm;height:3mm;border-radius:50%;background:#8a6cff;"></span><span class="cf" style="right:9%;bottom:9%;width:2.3mm;height:2.3mm;border-radius:0.6mm;background:#21c7b6;transform:rotate(22deg);"></span><span class="cf" style="left:48%;bottom:6%;width:2mm;height:2mm;border-radius:50%;background:#ff5ca8;"></span><span class="cf" style="right:18%;bottom:16%;width:1.8mm;height:1.8mm;border-radius:50%;background:#ffc93c;"></span><span class="cf" style="left:16%;bottom:17%;width:1.8mm;height:1.8mm;border-radius:0.6mm;background:#ff5ca8;transform:rotate(22deg);"></span>
+    <div class="pop-in" style="gap:4mm"><svg width="33mm" height="40mm" viewBox="0 0 74 90" aria-hidden="true">
+    <path d="M27 52 L20 86 L33 76 L37 54 Z" fill="#ff5ca8"/>
+    <path d="M47 52 L54 86 L41 76 L37 54 Z" fill="#8a6cff"/>
+    <circle cx="37" cy="34" r="28" fill="#ffc93c" stroke="#fff" stroke-width="4"/>
+    <path transform="translate(37 34) scale(1.25) translate(-12 -12)" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="#fff"/>
+  </svg>
+     <div style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:800;font-size:9mm;letter-spacing:0.6mm;text-transform:uppercase;color:#d63f86;line-height:1.1;">Diploma</div>
+     
+     <div style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:800;font-size:8mm;letter-spacing:0mm;color:#2b2440;line-height:1.1;">Ema Horvat</div>
+     <span style="display:inline-block;width:3.5mm;height:3.5mm;border-radius:50%;background:#d63f86;"></span>
+     <div style="font-family:var(--font-hand),'Caveat',cursive;font-size:6.8mm;color:#2b2440;line-height:1.35;max-width:22ch;">za naučenu cijelu abecedu — bravo!</div></div>
+  </div></section></body></html>

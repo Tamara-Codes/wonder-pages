@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Coloring page">
+  <rect width="400" height="400" fill="#ffffff"/>
+  <g fill="none" stroke="#d8d2ea" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="200" cy="168" r="74"/>
+    <circle cx="176" cy="156" r="9" fill="#d8d2ea"/>
+    <circle cx="224" cy="156" r="9" fill="#d8d2ea"/>
+    <path d="M168 196 q32 28 64 0"/>
+    <path d="M120 300 q80 -52 160 0"/>
+  </g>
+  <text x="200" y="360" text-anchor="middle" font-family="'Baloo 2', system-ui, sans-serif" font-size="26" font-weight="700" fill="#b3aacb">Coloring page</text>
+</svg>

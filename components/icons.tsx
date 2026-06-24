@@ -247,6 +247,62 @@ export const SpotDiff = (p: IconProps) => (
   </Svg>
 );
 
+export const Maze = (p: IconProps) => (
+  <Svg {...p}>
+    <rect x="3" y="3" width="18" height="18" rx="2" />
+    <path d="M7 3v10h4V7h4v10" />
+    <path d="M11 21v-4h6" />
+  </Svg>
+);
+
+export const Grid = (p: IconProps) => (
+  <Svg {...p}>
+    <rect x="3" y="3" width="18" height="18" rx="2" />
+    <path d="M3 9h18" />
+    <path d="M3 15h18" />
+    <path d="M9 3v18" />
+    <path d="M15 3v18" />
+  </Svg>
+);
+
+export const MatchPairs = (p: IconProps) => (
+  <Svg {...p}>
+    {/* two columns of dots joined by crossing match lines */}
+    <circle cx="5" cy="6" r="2" />
+    <circle cx="5" cy="18" r="2" />
+    <circle cx="19" cy="6" r="2" />
+    <circle cx="19" cy="18" r="2" />
+    <path d="M7 6.8 17 17.2" />
+    <path d="M7 17.2 17 6.8" />
+  </Svg>
+);
+
+export const Count = (p: IconProps) => (
+  <Svg {...p}>
+    <circle cx="7" cy="8" r="1.6" fill="currentColor" stroke="none" />
+    <circle cx="7" cy="16" r="1.6" fill="currentColor" stroke="none" />
+    <path d="M12 8h7" />
+    <path d="M12 16h7" />
+  </Svg>
+);
+
+export const Trace = (p: IconProps) => (
+  <Svg {...p}>
+    {/* a dashed wave being traced */}
+    <path d="M3 14c2 0 2-4 4.5-4S10 14 12 14s2-4 4.5-4S19 14 21 14" strokeDasharray="2 2.5" />
+    <path d="M16.5 4.5l3 3L9 18l-3.5.5L6 15z" />
+  </Svg>
+);
+
+export const OddOne = (p: IconProps) => (
+  <Svg {...p}>
+    <circle cx="7" cy="7" r="3" />
+    <circle cx="17" cy="7" r="3" />
+    <circle cx="7" cy="17" r="3" />
+    <rect x="14" y="14" width="6" height="6" rx="1.5" />
+  </Svg>
+);
+
 export const Bulb = (p: IconProps) => (
   <Svg {...p}>
     <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.8.8 1.3 1.5 1.5 2.5" />

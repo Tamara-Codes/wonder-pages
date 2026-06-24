@@ -1,0 +1,17 @@
+Wonder Pages — third-party icon attribution
+============================================
+
+The picture icons in this folder (public/icons/*.svg) are from the
+Noto Emoji project by Google.
+
+    Source:    https://github.com/googlefonts/noto-emoji
+    Copyright: Copyright Google Inc.
+    License:   Apache License, Version 2.0 (see LICENSE.txt in this folder)
+
+These assets are used unmodified. The Apache License, Version 2.0 permits
+commercial use and redistribution (including in printed products) provided
+the license text and this notice are retained. A full copy of the license is
+included in LICENSE.txt.
+
+You may obtain a copy of the License at:
+    http://www.apache.org/licenses/LICENSE-2.0

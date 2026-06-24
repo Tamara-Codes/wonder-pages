@@ -70,6 +70,22 @@ export async function editImage(
   throw new Error("Gemini returned no edited image.");
 }
 
+/**
+ * Plain text generation from a prompt (no image, no vision). Used by Odd One
+ * Out to have the model invent the category sets. Returns the concatenated
+ * text parts; callers parse JSON out of it themselves.
+ */
+export async function generateText(prompt: string): Promise<string> {
+  const response = await ai().models.generateContent({
+    model: DETECT_MODEL,
+    contents: prompt,
+  });
+  const parts = response.candidates?.[0]?.content?.parts ?? [];
+  let text = "";
+  for (const part of parts) if (typeof part.text === "string") text += part.text;
+  return text;
+}
+
 /** One detected object: a normalized [ymin, xmin, ymax, xmax] box (0–1000). */
 export interface DetectedBox {
   label: string;
@@ -144,6 +160,86 @@ export async function detectElements(
   let text = "";
   for (const part of parts) if (typeof part.text === "string") text += part.text;
   return parseBoxes(text);
+}
+
+/** A detected element plus its pixel-silhouette mask (a PNG, may be null). */
+export interface SegmentedElement extends DetectedBox {
+  /** Gemini's segmentation mask for this element: a greyscale PNG probability
+   *  map covering the box. Null if the model didn't return one. */
+  mask: Buffer | null;
+}
+
+/**
+ * Like detectElements, but also asks Gemini 2.5 for a per-element segmentation
+ * MASK (a base64 PNG covering each box). Spot the Difference uses these so it can
+ * remove an element by its exact silhouette and composite the fill back only over
+ * those pixels — guaranteeing the rest of the scene stays identical.
+ */
+export async function segmentElements(
+  image: Buffer,
+  mimeType = "image/png",
+): Promise<SegmentedElement[]> {
+  const prompt =
+    `Give the segmentation masks for the distinct, separate visual elements in this ` +
+    `image that a child could point to (individual animals, characters, plants, trees, ` +
+    `the sun, clouds, props). Do NOT include the sky or the ground/grass background itself. ` +
+    `Return ONLY a JSON array, no prose, no markdown, no code fences. For EACH element ` +
+    `output an object with EXACTLY these keys: "box_2d" (an array [ymin,xmin,ymax,xmax] of ` +
+    `integers 0–1000), "mask" (a base64 PNG data URI of the segmentation mask for that box), ` +
+    `and "label" (a short string). List up to 20 of the clearest, most separated elements.`;
+
+  const response = await ai().models.generateContent({
+    model: DETECT_MODEL,
+    contents: [
+      {
+        role: "user",
+        parts: [
+          { inlineData: { mimeType, data: image.toString("base64") } },
+          { text: prompt },
+        ],
+      },
+    ],
+  });
+
+  const parts = response.candidates?.[0]?.content?.parts ?? [];
+  let text = "";
+  for (const part of parts) if (typeof part.text === "string") text += part.text;
+
+  const match = text.match(/\[[\s\S]*\]/);
+  if (!match) return [];
+  let raw: unknown;
+  try {
+    raw = JSON.parse(match[0]);
+  } catch {
+    return [];
+  }
+  if (!Array.isArray(raw)) return [];
+
+  const num = (v: unknown) => (typeof v === "number" ? v : Number(v));
+  const ok = (n: number) => Number.isFinite(n);
+  const out: SegmentedElement[] = [];
+  for (const entry of raw) {
+    if (!entry || typeof entry !== "object") continue;
+    const e = entry as Record<string, unknown>;
+    const label = typeof e.label === "string" ? e.label : undefined;
+    const b = e.box_2d;
+    if (!label || !Array.isArray(b) || b.length !== 4) continue;
+    const box = b.map(num) as [number, number, number, number];
+    if (!box.every(ok)) continue;
+
+    let mask: Buffer | null = null;
+    if (typeof e.mask === "string" && e.mask) {
+      const comma = e.mask.indexOf(",");
+      const b64 = comma >= 0 ? e.mask.slice(comma + 1) : e.mask;
+      try {
+        mask = b64 ? Buffer.from(b64, "base64") : null;
+      } catch {
+        mask = null;
+      }
+    }
+    out.push({ label, box, mask });
+  }
+  return out;
 }
 
 /**

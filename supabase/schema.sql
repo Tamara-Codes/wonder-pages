@@ -1,207 +1,131 @@
--- Wonder Pages — database + storage schema.
+-- Wonder Pages — database + storage schema (Croatia validation shop).
 -- Paste this into Supabase → SQL Editor and run it once.
--- Also: Authentication → Providers → enable "Anonymous sign-ins".
+--
+-- The product is a shop selling a pre-built, personalized printed keepsake.
+-- There is no online payment and no accounts: a visitor picks the product +
+-- options + the child's name, previews it, chooses delivery (BoxNow / Hrvatska
+-- pošta), and places an order. We email payment instructions (bank transfer)
+-- and fulfil by hand. Everything is written server-side with the service-role
+-- key, so RLS stays closed to clients.
 
 -- ──────────────────────────────────────────────────────────────
--- games table
+-- Retire the v1 "studio" tables and the deferred online-checkout tables
+-- (user-generated games, credits, Stripe/Lulu orders, email capture).
+-- Safe to run repeatedly; drops only if present.
 -- ──────────────────────────────────────────────────────────────
-create table if not exists public.games (
-  id          uuid primary key default gen_random_uuid(),
-  user_id     uuid not null references auth.users (id) on delete cascade,
-  type        text not null check (type in ('coloring', 'find-it', 'spot-difference')),
-  theme       text not null,
-  difficulty  text not null default 'medium' check (difficulty in ('easy', 'medium', 'hard')),
-  title       text not null,
-  image_url   text not null,
-  -- find-it:         { imgW, imgH, items:[{key,label,x,y,w,h}] }
-  -- spot-difference: { imgW, imgH, imageB, diffs:[{x,y,w,h}] }; coloring: null
-  answer_key  jsonb,
-  created_at  timestamptz not null default now()
-);
-
--- Backfill for tables created before difficulty existed.
-alter table public.games
-  add column if not exists difficulty text not null default 'medium'
-  check (difficulty in ('easy', 'medium', 'hard'));
-
--- Coloring games: the child's saved colored version, kept alongside the blank
--- line art in image_url (so the page can still be re-coloured or printed blank).
--- Null until the child saves a coloring; other game types leave it null.
-alter table public.games
-  add column if not exists colored_url text;
-
--- Widen the game type check to allow newer game types on databases created
--- before they existed. Drop + recreate the named constraint.
-do $$
-begin
-  alter table public.games drop constraint if exists games_type_check;
-  alter table public.games
-    add constraint games_type_check
-    check (type in ('coloring', 'find-it', 'spot-difference'));
-end $$;
-
-create index if not exists games_user_id_created_idx
-  on public.games (user_id, created_at desc);
-
--- Row Level Security: everyone (including anonymous users) only sees their own.
-alter table public.games enable row level security;
-
-drop policy if exists "own games — select" on public.games;
-create policy "own games — select" on public.games
-  for select to authenticated
-  using (user_id = auth.uid());
-
-drop policy if exists "own games — insert" on public.games;
-create policy "own games — insert" on public.games
-  for insert to authenticated
-  with check (user_id = auth.uid());
-
-drop policy if exists "own games — update" on public.games;
-create policy "own games — update" on public.games
-  for update to authenticated
-  using (user_id = auth.uid());
-
-drop policy if exists "own games — delete" on public.games;
-create policy "own games — delete" on public.games
-  for delete to authenticated
-  using (user_id = auth.uid());
+drop table if exists public.booklet_pages cascade;
+drop table if exists public.booklets cascade;
+drop table if exists public.games cascade;
+drop table if exists public.payments cascade;
+drop table if exists public.waitlist cascade;
+drop table if exists public.profiles cascade;
+drop table if exists public.orders cascade;
+drop table if exists public.notify_emails cascade;
+drop function if exists public.consume_credit(uuid) cascade;
+drop function if exists public.increment_credits(uuid, integer) cascade;
+drop function if exists public.handle_new_user() cascade;
+drop function if exists public.touch_updated_at() cascade;
 
 -- ──────────────────────────────────────────────────────────────
--- storage bucket for generated artwork (public read)
+-- storage bucket for artwork: catalog coloring line art, rendered
+-- covers, and print-ready PDFs. Public read (the on-site preview fetches
+-- images directly). Writes are server-side only.
 -- ──────────────────────────────────────────────────────────────
 insert into storage.buckets (id, name, public)
 values ('pages', 'pages', true)
 on conflict (id) do nothing;
 
--- Uploads happen server-side with the service-role key (bypasses RLS),
--- so we only need policies if we ever upload from the browser. Public read
--- is handled by the bucket's `public = true` flag above.
-
 -- ──────────────────────────────────────────────────────────────
--- profiles + credits
+-- coloring_catalog — pre-generated blank coloring line art, the source
+-- of the activity book's coloring pages. Built once by
+-- scripts/build-coloring-catalog.mjs. Server-only (resolved into book
+-- plans server-side); the images themselves are public via storage.
 -- ──────────────────────────────────────────────────────────────
-create table if not exists public.profiles (
-  id          uuid primary key references auth.users (id) on delete cascade,
-  -- No free credits on login. The free tier is one game of each type for
-  -- anonymous users (see generate route); logging in is for buying token
-  -- packs. Starts at 0 — credits are only ever added by a paid purchase.
-  credits     integer not null default 0,
+create table if not exists public.coloring_catalog (
+  id          uuid primary key default gen_random_uuid(),
+  theme       text not null,
+  difficulty  text not null default 'medium'
+              check (difficulty in ('easy', 'medium', 'hard')),
+  image_url   text not null,
   created_at  timestamptz not null default now()
 );
 
-alter table public.profiles enable row level security;
+create index if not exists coloring_catalog_theme_diff_idx
+  on public.coloring_catalog (theme, difficulty);
 
-drop policy if exists "own profile — select" on public.profiles;
-create policy "own profile — select" on public.profiles
-  for select to authenticated
-  using (id = auth.uid());
-
--- Auto-create a profile row whenever a new auth user (incl. anonymous) appears.
-create or replace function public.handle_new_user()
-returns trigger language plpgsql security definer set search_path = public as $$
-begin
-  insert into public.profiles (id) values (new.id) on conflict do nothing;
-  return new;
-end;
-$$;
-
-drop trigger if exists on_auth_user_created on auth.users;
-create trigger on_auth_user_created
-  after insert on auth.users
-  for each row execute function public.handle_new_user();
-
--- Atomically spend one credit. Returns remaining balance, or -1 if none left.
-create or replace function public.consume_credit(uid uuid)
-returns integer language plpgsql security definer set search_path = public as $$
-declare remaining integer;
-begin
-  update public.profiles
-     set credits = credits - 1
-   where id = uid and credits > 0
-   returning credits into remaining;
-  if not found then
-    return -1;
-  end if;
-  return remaining;
-end;
-$$;
-
--- Add credits (called from the Stripe webhook after a successful payment).
-create or replace function public.increment_credits(uid uuid, n integer)
-returns void language sql security definer set search_path = public as $$
-  update public.profiles set credits = credits + n where id = uid;
-$$;
-
--- SECURITY: these SECURITY DEFINER functions bypass RLS, so they must NOT be
--- callable by browser clients (incl. anonymous users) — otherwise anyone could
--- mint themselves credits. We only ever call them server-side with the secret
--- key (service_role). Revoke from everyone, then grant to service_role only.
-revoke execute on function public.consume_credit(uuid) from public, anon, authenticated;
-revoke execute on function public.increment_credits(uuid, integer) from public, anon, authenticated;
-revoke execute on function public.handle_new_user() from public, anon, authenticated;
-grant execute on function public.consume_credit(uuid) to service_role;
-grant execute on function public.increment_credits(uuid, integer) to service_role;
+alter table public.coloring_catalog enable row level security;
+-- No client policy: read/written only with the service-role key.
 
 -- ──────────────────────────────────────────────────────────────
--- payments ledger (idempotency for the Stripe webhook)
+-- order_requests — the Croatia validation shop. A manual order flow, not a
+-- live payment one: a visitor places an order (full buyer + delivery details
+-- + the gift's personalization), picks a delivery method, and we email payment
+-- instructions (bank transfer) then fulfil by hand. A full delivery address +
+-- "place order" intent at the shown price is the real buying signal. Inserted
+-- server-side; RLS on with no policy = no client access.
 -- ──────────────────────────────────────────────────────────────
-create table if not exists public.payments (
-  id            text primary key,          -- Stripe checkout session id
-  user_id       uuid references auth.users (id) on delete cascade,
-  credits       integer not null,
-  amount_total  integer,
+create table if not exists public.order_requests (
+  id            uuid primary key default gen_random_uuid(),
+  -- buyer
+  full_name     text not null,
+  email         text not null,
+  phone         text,
+  -- delivery (Croatia only for now)
+  street        text not null,
+  city          text not null,
+  postcode      text not null,
+  country       text not null default 'HR',
+  delivery_method text check (delivery_method in ('boxnow','posta')),
+  quantity      integer not null default 1 check (quantity between 1 and 20),
+  -- the gift (who it's for) + personalization
+  product       text not null default 'alphabet'
+                check (product in ('activity','alphabet','bundle')),
+  child_name    text,
+  child_surname text,                 -- alphabet: shown on the diploma leaf
+  child_gender  text check (child_gender in ('boy','girl')),  -- alphabet: diploma wording (Naučio/Naučila)
+  child_age     integer check (child_age between 3 and 8),
+  theme         text,                 -- activity / bundle option
+  language      text check (language in ('en','hr')),  -- alphabet / bundle option
+  occasion      text,
+  deadline      date,
+  note          text,
+  dedication    text,                 -- alphabet: the free-written "posveta" leaf
+  -- the price they saw when they ordered (willingness-to-pay signal)
+  price_cents   integer not null default 1500,
+  currency      text not null default 'eur',
+  -- meta: which language they used, where they came from, lifecycle
+  locale        text check (locale in ('hr','en')),
+  source        text,                 -- utm/referrer tag (linkedin, instagram…)
+  order_group   uuid,                  -- ties the rows of one multi-child order together (one row per child)
+  status        text not null default 'pending_confirmation'
+                check (status in ('pending_confirmation','contacted','confirmed','paid','fulfilled','cancelled')),
   created_at    timestamptz not null default now()
 );
 
--- Server-only (service role); RLS on with no policy = no client access.
-alter table public.payments enable row level security;
+-- Idempotent for existing installs.
+alter table public.order_requests add column if not exists child_surname   text;
+alter table public.order_requests add column if not exists dedication      text;
+alter table public.order_requests add column if not exists child_gender    text;
+alter table public.order_requests add column if not exists delivery_method text;
+alter table public.order_requests add column if not exists order_group     uuid;
+do $$ begin
+  alter table public.order_requests
+    add constraint order_requests_child_gender_chk check (child_gender in ('boy','girl'));
+exception when duplicate_object then null; end $$;
+do $$ begin
+  alter table public.order_requests
+    add constraint order_requests_delivery_method_chk check (delivery_method in ('boxnow','posta'));
+exception when duplicate_object then null; end $$;
 
--- ──────────────────────────────────────────────────────────────
--- waitlist — demand capture while payments are off (pre-obrt)
--- Records that a user wants more games, and which pack they'd pick.
--- ──────────────────────────────────────────────────────────────
-create table if not exists public.waitlist (
-  id          uuid primary key default gen_random_uuid(),
-  user_id     uuid references auth.users (id) on delete cascade,
-  pack        integer,  -- credits in the pack they tapped (null = general interest)
-  created_at  timestamptz not null default now(),
-  -- One row per user per pack. `nulls not distinct` so a repeated tap on the
-  -- general-interest link (pack = null) collapses too, not just the packs.
-  constraint waitlist_user_pack_uniq unique nulls not distinct (user_id, pack)
-);
+create index if not exists order_requests_created_idx
+  on public.order_requests (created_at desc);
 
--- Backfill the constraint on databases created before it existed.
-do $$
-begin
-  if not exists (
-    select 1 from pg_constraint where conname = 'waitlist_user_pack_uniq'
-  ) then
-    alter table public.waitlist
-      add constraint waitlist_user_pack_uniq unique nulls not distinct (user_id, pack);
-  end if;
-end $$;
+-- group the rows of one multi-child order
+create index if not exists order_requests_group_idx
+  on public.order_requests (order_group);
+create index if not exists order_requests_status_idx
+  on public.order_requests (status);
 
-alter table public.waitlist enable row level security;
-
--- Users may register their own interest. No client read (you review demand
--- via the dashboard / service role).
-drop policy if exists "own waitlist — insert" on public.waitlist;
-create policy "own waitlist — insert" on public.waitlist
-  for insert to authenticated
-  with check (user_id = auth.uid());
-
--- ──────────────────────────────────────────────────────────────
--- notify_emails — landing-page email capture for upcoming features
--- (e.g. the mailed keepsake booklet). No login required: rows are
--- inserted server-side with the service-role key, so anonymous
--- visitors work. RLS on with no policy = no client access.
--- ──────────────────────────────────────────────────────────────
-create table if not exists public.notify_emails (
-  id          uuid primary key default gen_random_uuid(),
-  email       text not null,
-  source      text,                 -- where they signed up, e.g. 'booklet'
-  created_at  timestamptz not null default now(),
-  constraint notify_emails_email_uniq unique (email)
-);
-
-alter table public.notify_emails enable row level security;
+alter table public.order_requests enable row level security;
+-- No client policy: written only with the service-role key (the /api/order
+-- route); reviewed in the Supabase dashboard.
