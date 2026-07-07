@@ -55,24 +55,23 @@ export const ALPHABET_COPY: AlphabetLandingCopy = {
       titleName: "abeceda",
       titleBox: "",
       subtitle:
-        "Personalizirani poklon za djecu od 2 do 6 godina: cijela abeceda, s imenom djeteta, posvetom i diplomom, svako slovo na svom listiću.",
+        "Personalizirani poklon za djecu od 3 do 6 godina: cijela abeceda, s imenom djeteta, posvetom i diplomom, svako slovo na svom listiću.",
       cta: "Naruči odmah",
       badgeLeaf: "Slova A–Ž",
-      badgeBox: "U poklon-kutiji",
+      badgeBox: "U poklon-vrećici",
       personalized: "Personalizirano imenom djeteta",
       coverLabel: "moja prva slova",
     },
     trust: [
       "Personalizirano imenom djeteta",
-      "Za uzrast 2–6 godina",
+      "Za uzrast 3 do 6 godina",
     ],
     format: {
-      heading: "Kutija listića, ne knjiga",
-      sub: "Komplet stiže kao set zasebnih listića u poklon-kutiji, uz posvetu, listić s imenom i završnu diplomu.",
+      heading: "Listići u poklon vrećici",
+      sub: "Stiže kao zbirka zasebnih listića u ukrasnoj poklon vrećici, s posvetom, listićem s imenom i završnom diplomom.",
       slides: [
-        { caption: "Po jedan listić za svako slovo — cijela abeceda A–Ž." },
-        { caption: "Dijete oboji veliki znak i sličicu, pa ga napiše na crtama." },
-        { caption: "Od praznih linija do gotovog djela — listić koji se ponosno čuva." },
+        { caption: "Stiže u ukrasnoj poklon vrećici s personaliziranim privjeskom, spremno za darivanje." },
+        { caption: "Personalizirana naslovnica i po jedan listić za svako slovo — dijete oboji znak i sličicu, pa slovo napiše na crtama." },
       ],
     },
     leaf: {
@@ -81,7 +80,7 @@ export const ALPHABET_COPY: AlphabetLandingCopy = {
       steps: [
         { title: "Oboji veliko slovo", copy: "Veliko šuplje slovo ispunjeno je za bojanje, uči se oblik kroz boju." },
         { title: "Oboji sličicu", copy: "Sličica uz svako slovo („A kao Avion”) za bojanje i prepoznavanje glasa." },
-        { title: "Napiši na crtama", copy: "Crte za pisanje s blijedim znakom za precrtavanje, prvi koraci u pisanju." },
+        { title: "Vježba pisanja", copy: "Crte za pisanje s blijedim znakom za precrtavanje, prvi koraci u pisanju." },
       ],
     },
     pricing: {
@@ -89,18 +88,18 @@ export const ALPHABET_COPY: AlphabetLandingCopy = {
       includes: [
         "Listić za svako slovo abecede",
         "Osobna posveta i diploma s imenom djeteta",
-        "Kartonska poklon-kutija",
+        "Ukrasna poklon-vrećica s privjeskom",
         "Ručni tisak i dostava u Hrvatskoj",
       ],
-      note: "Plaćanje je isključivo uplatom na račun (IBAN) — bez plaćanja online. Nakon narudžbe na e-mail dobivate upute za uplatu. Dostava: BoxNow paketomat ili Hrvatska pošta.",
+      note: "Plaćanje je za sada isključivo uplatom na račun (IBAN), bez plaćanja online. Nakon narudžbe na e-mail dobivate upute za uplatu. Uskoro ćemo omogućiti plaćanje karticom. Dostava: BoxNow paketomat ili Hrvatska pošta.",
     },
     faq: {
       heading: "Česta pitanja",
       items: [
-        { q: "Je li to knjiga?", a: "Nije — to je komplet zasebnih listića (po jedan za svako slovo), svaki gotov za bojanje i pisanje. Dijete uzima listić po listić, a sve stiže lijepo zapakirano kao poklon." },
-        { q: "Što sve dijete dobije?", a: "Cijelu abecedu A–Ž, a uz to posvetu, listić s imenom te završnu diplomu — svako na svom listiću." },
-        { q: "Kako se plaća?", a: "Isključivo uplatom na račun (IBAN) — bez plaćanja online. Narudžbu šaljete bez plaćanja, na e-mail dobivate upute za uplatu i plaćate tek nakon toga." },
-        { q: "Za koju je dob?", a: "Za djecu od 2 do 6 godina koja uče slova i prve korake u pisanju." },
+        { q: "Je li to knjiga?", a: "Nije, to je zbirka zasebnih listića (po jedan za svako slovo), svaki gotov za bojanje i pisanje. Dijete uzima listić po listić, a sve stiže lijepo zapakirano kao poklon." },
+        { q: "Što sve dijete dobije?", a: "Cijelu abecedu, a uz to posvetu, listić s imenom te završnu diplomu, svako na svom listiću." },
+        { q: "Kako se plaća?", a: "Za sada isključivo uplatom na račun (IBAN), bez plaćanja online. Narudžbu šaljete bez plaćanja, na e-mail dobivate upute za uplatu i plaćate tek nakon toga. Uskoro ćemo omogućiti plaćanje karticom." },
+        { q: "Za koju je dob?", a: "Za djecu od 3 do 6 godina koja uče slova i prve korake u pisanju." },
         { q: "Mogu li ga poslati izravno djetetu?", a: "Da. Dostavljamo na vašu adresu ili izravno na adresu djeteta, kako želite." },
       ],
     },
