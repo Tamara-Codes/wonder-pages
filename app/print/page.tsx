@@ -18,7 +18,7 @@
  * injects the print stylesheet and drops them in. Fonts come from the root
  * layout's next/font variables (--font-display etc.).
  */
-import { buildPrintLeaves, buildNumbersPrintLeaves, buildNumberIntroTestLeaves, buildNumberPlayTestLeaves, buildNumberTasksTestLeaves, buildKiteTestLeaves, buildZooTestLeaves, buildNumbersV2PrintLeaves, PRINT_CSS, type PrintOpts } from "@/lib/print-build";
+import { buildPrintLeaves, buildNumbersPrintLeaves, buildNumberIntroTestLeaves, buildNumberPlayTestLeaves, buildNumberTasksTestLeaves, buildKiteTestLeaves, buildZooTestLeaves, buildColourByNumberTestLeaves, buildNumbersV2PrintLeaves, PRINT_CSS, type PrintOpts } from "@/lib/print-build";
 import type { LanguageId } from "@/lib/alphabet";
 
 export const runtime = "nodejs";
@@ -55,6 +55,7 @@ export default async function PrintPage({
     : book === "numbers-tasks-test" ? buildNumberTasksTestLeaves(opts.childName)
     : book === "numbers-kite-test" ? buildKiteTestLeaves(opts.childName)
     : book === "numbers-zoo-test" ? buildZooTestLeaves(opts.childName)
+    : book === "numbers-colour-test" ? buildColourByNumberTestLeaves(opts.childName)
     : book === "numbers-v2" ? buildNumbersV2PrintLeaves(opts)
     : buildPrintLeaves(opts);
 

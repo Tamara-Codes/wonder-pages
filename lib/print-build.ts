@@ -866,16 +866,22 @@ export function buildKiteTestLeaves(childName = "Ema"): string[] {
 
 const ZOO_COUNT_ICONS = ["camel", "lion", "elephant", "monkey"];
 
+// The icon VERSION is part of the FILENAME (zoo-icon-camel-v4.png) — a query
+// param wasn't enough, the browser kept serving the stale cached icon. Bump
+// together with V in scripts/crop-zoo-icons.mjs. The scene keeps its name +
+// a query version (it changes rarely once the counts are right).
+const ZOO_ART_V = "4";
+
 /** The zoo counting leaf, or null until the scene art is generated. */
 function zooCountLeaf(footer: string, pageNo: number): string | null {
   const src = artImageSrc("zoo-scene");
   if (!src) return null;
   const row = ZOO_COUNT_ICONS
-    .map((k) => `<div class="npg-zoo-cell"><img src="/icons-art/zoo-icon-${k}.png" alt="" /><div class="npg-stack-box"></div></div>`)
+    .map((k) => `<div class="npg-zoo-cell"><img src="/icons-art/zoo-icon-${k}-v${ZOO_ART_V}.png" alt="" /><div class="npg-stack-box"></div></div>`)
     .join("");
   return `<section class="leaf"><div class="npg">
     <div class="npg-instruction">Prebroji životinje i napiši broj.</div>
-    <div class="npg-zoo-scene"><img src="${src}" alt="" /></div>
+    <div class="npg-zoo-scene"><img src="${src}?v=${ZOO_ART_V}" alt="" /></div>
     <div class="npg-zoo-row">${row}</div>
     <div class="lp-foot">${escapeHtml(footer)}</div>
   </div><div class="lp-pageno">${pageNo}</div></section>`;
@@ -886,6 +892,111 @@ export function buildZooTestLeaves(childName = "Ema"): string[] {
   const footer = `moji prvi brojevi · ${(childName || "Ema").toUpperCase()}`;
   const leaf = zooCountLeaf(footer, 1);
   return leaf ? [tagLeaf(leaf, "zoo-count-test")] : [];
+}
+
+// ── Numbers v2 prototype — colour-by-number balloon leaf ──────────
+// "Oboji sliku po brojevima!": a hot-air balloon drawn as white outline
+// regions, each holding a number; the legend up top maps every number 1–10 to
+// a printed colour swatch. PURE CODE (no Gemini) — regions, dividers and
+// number placement are exact SVG. Numbers 1–4 repeat symmetrically across the
+// seven envelope gores (1,2,3,4,3,2,1); 5 = bottom band, 6 = basket,
+// 7 = pennant flag, 9 = crown cap, 8 + 10 = the two clouds, and the sun
+// reuses 2 (žuto) so repetition is part of the game.
+
+/** Number → printed swatch colour (cheerful print-safe hues, brand-adjacent). */
+const CBN_LEGEND: Array<{ n: number; hex: string }> = [
+  { n: 1, hex: "#e94f4f" },  // crveno
+  { n: 2, hex: "#ffc93c" },  // žuto
+  { n: 3, hex: "#3da5ff" },  // plavo
+  { n: 4, hex: "#58c15c" },  // zeleno
+  { n: 5, hex: "#ff9838" },  // narančasto
+  { n: 6, hex: "#a9764f" },  // smeđe
+  { n: 7, hex: "#ff5ca8" },  // ružičasto
+  { n: 8, hex: "#a5d8ff" },  // svijetloplavo
+  { n: 9, hex: "#8a6cff" },  // ljubičasto
+  { n: 10, hex: "#b9b4c7" }, // sivo
+];
+
+/** The balloon colouring picture: all regions white, numbered, ink outlines. */
+function colourByNumberBalloonSvg(): string {
+  const num = (x: number, y: number, n: number, size = 5): string =>
+    `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" text-anchor="middle" dominant-baseline="central" style="font-family:var(--font-body),'Nunito',sans-serif;font-weight:700;font-size:${size}px;fill:${INK}">${n}</text>`;
+  const thick = `fill="#fff" stroke="${INK}" stroke-width="0.9" stroke-linejoin="round"`;
+  const thin = `fill="none" stroke="${INK}" stroke-width="0.55" stroke-linecap="round"`;
+
+  // Envelope outline: widest 76 at y38, pole at (58,8), throat 50–66 at y70.
+  const envelope = `<path d="M50 70 C 28 62, 20 50, 20 38 C 20 18, 38 8, 58 8 C 78 8, 96 18, 96 38 C 96 50, 88 62, 66 70 Z" ${thick}/>`;
+  // Crown-cap divider (region 9 above it) and bottom-band divider (region 5
+  // below it), both gentle downward-bowed arcs across the envelope.
+  const capLine = `<path d="M36 14 Q58 22 80 14" ${thin}/>`;
+  const bandLine = `<path d="M26 55 Q58 65 90 55" ${thin}/>`;
+  // Six gore dividers between the cap and band arcs → seven vertical stripes.
+  // Each boundary j (at fraction f = j/7) starts on the cap arc, bulges out to
+  // the envelope's width at mid-height, and lands on the band arc.
+  let gores = "";
+  for (let j = 1; j <= 6; j++) {
+    const f = j / 7;
+    const bow = f * (1 - f); // 0 at the edges, max in the middle (arc dip)
+    const capX = 36 + 44 * f, capY = 14 + 16 * bow;
+    const bandX = 26 + 64 * f, bandY = 55 + 20 * bow;
+    const midX = 20 + 76 * f;
+    gores += `<path d="M${capX.toFixed(1)} ${capY.toFixed(1)} C ${midX.toFixed(1)} 30, ${midX.toFixed(1)} 46, ${bandX.toFixed(1)} ${bandY.toFixed(1)}" ${thin}/>`;
+  }
+  // Stripe numbers at the widest line, symmetric 1,2,3,4,3,2,1.
+  const goreNums = [1, 2, 3, 4, 3, 2, 1]
+    .map((n, k) => num(20 + (76 * (k + 0.5)) / 7, 38, n))
+    .join("");
+  // Pennant flag on a little mast at the pole (region 7).
+  const flag =
+    `<line x1="58" y1="8" x2="58" y2="1" stroke="${INK}" stroke-width="0.6"/>` +
+    `<path d="M58 1 L58 7.4 L74 4.2 Z" ${thick.replace("0.9", "0.6")}/>`;
+  // Ropes + basket (region 6): rim bar and a slightly tapered weave body.
+  const basket =
+    `<line x1="50" y1="70" x2="48.5" y2="82" stroke="${INK}" stroke-width="0.6"/>` +
+    `<line x1="66" y1="70" x2="67.5" y2="82" stroke="${INK}" stroke-width="0.6"/>` +
+    `<rect x="44" y="82" width="28" height="4.5" rx="1.5" ${thick.replace("0.9", "0.7")}/>` +
+    `<path d="M46.5 86.5 L69.5 86.5 L67.5 99 L48.5 99 Z" ${thick.replace("0.9", "0.7")}/>`;
+  // Sun with rays (reuses 2 = žuto) and the two clouds (8 and 10).
+  const rays = Array.from({ length: 8 }, (_, i) => {
+    const a = (Math.PI / 4) * i + Math.PI / 8;
+    const [c, s] = [Math.cos(a), Math.sin(a)];
+    return `<line x1="${(13 + 9 * c).toFixed(1)}" y1="${(13 + 9 * s).toFixed(1)}" x2="${(13 + 12.5 * c).toFixed(1)}" y2="${(13 + 12.5 * s).toFixed(1)}" stroke="${INK}" stroke-width="0.6" stroke-linecap="round"/>`;
+  }).join("");
+  const sun = `${rays}<circle cx="13" cy="13" r="7" ${thick.replace("0.9", "0.7")}/>`;
+  const cloudPath = `M4 12 Q0 12 0 8 Q0 4 4 4 Q5 0 9.5 0 Q13 0 14.5 2.5 Q19 1.5 20 5.5 Q24 5.5 24 9 Q24 12 20 12 Z`;
+  const clouds =
+    `<g transform="translate(2 62)"><path d="${cloudPath}" ${thick.replace("0.9", "0.7")}/></g>` +
+    `<g transform="translate(91 54)"><path d="${cloudPath}" ${thick.replace("0.9", "0.7")}/></g>`;
+
+  const numbers =
+    goreNums +
+    num(58, 15.2, 9, 4.2) +   // crown cap
+    num(58, 67.2, 5, 4.2) +   // bottom band
+    num(58, 93, 6) +          // basket
+    num(62.5, 4.2, 7, 3.4) +  // flag
+    num(13, 13, 2) +          // sun
+    num(14, 70, 8, 4.2) +     // left cloud
+    num(103, 62, 10, 4.2);    // right cloud
+  return `<svg viewBox="0 0 116 104" aria-hidden="true">${sun}${clouds}${envelope}${capLine}${bandLine}${gores}${flag}${basket}${numbers}</svg>`;
+}
+
+/** The colour-by-number leaf: legend of 10 swatches, then the balloon. */
+function colourByNumberTestLeaf(childName: string): string {
+  const footer = `moji prvi brojevi · ${(childName || "Ema").toUpperCase()}`;
+  const legend = CBN_LEGEND
+    .map(({ n, hex }) => `<div class="cbn-swatch" style="background:${hex}"><span class="cbn-badge">${n}</span></div>`)
+    .join("");
+  return `<section class="leaf"><div class="npg">
+    <div class="npg-instruction">Oboji sliku po brojevima!</div>
+    <div class="cbn-legend">${legend}</div>
+    <div class="npg-scene">${colourByNumberBalloonSvg()}</div>
+    <div class="lp-foot">${escapeHtml(footer)}</div>
+  </div><div class="lp-pageno">1</div></section>`;
+}
+
+/** Single-leaf test build: just the colour-by-number balloon page. */
+export function buildColourByNumberTestLeaves(childName = "Ema"): string[] {
+  return [tagLeaf(colourByNumberTestLeaf(childName), "colour-by-number-test")];
 }
 
 // v2 is 1–10 (not 0–9), so the diploma line needs its own wording; everything
@@ -1021,11 +1132,20 @@ export const PRINT_CSS = `
   .npg-scene svg { width: 100%; height: 100%; }
   /* Count-the-zoo-animals page: the colour scene fills the free height, the
      count row beneath pairs each small animal icon with a write-in box. */
-  .npg-zoo-scene { flex: 1; min-height: 0; margin-top: 5mm; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .npg-zoo-scene { flex: 1; min-height: 0; margin-top: 5mm; display: flex; align-items: flex-start; justify-content: center; overflow: hidden; }
   .npg-zoo-scene img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
-  .npg-zoo-row { margin-top: 6mm; width: 100%; display: grid; grid-template-columns: repeat(4, 1fr); justify-items: center; }
+  .npg-zoo-row { margin-top: 6mm; margin-bottom: 9mm; width: 100%; display: grid; grid-template-columns: repeat(4, 1fr); justify-items: center; }
   .npg-zoo-cell { display: flex; align-items: center; gap: 3mm; }
   .npg-zoo-cell img { height: 12mm; width: auto; max-width: 20mm; object-fit: contain; }
+  /* Colour-by-number page: the legend row of 10 printed swatches, each with a
+     white number badge readable on any swatch colour. */
+  .cbn-legend { margin-top: 6mm; display: flex; justify-content: center; gap: 2.4mm; }
+  .cbn-swatch { width: 8.8mm; height: 8.8mm; border-radius: 2.2mm; border: 0.45mm solid ${INK}; display: grid; place-items: center; }
+  .cbn-badge {
+    width: 5.8mm; height: 5.8mm; border-radius: 50%; background: #fff; border: 0.3mm solid ${INK};
+    display: grid; place-items: center;
+    font-family: var(--font-body), 'Nunito', sans-serif; font-weight: 800; font-size: 3.2mm; color: ${INK};
+  }
   /* Pin the footer to the bottom of the tasks page whatever the content height. */
   .npg .lp-foot { margin-top: auto; padding-top: 3mm; }
   .lp-pageno { position: absolute; bottom: 8mm; right: 12mm; font-family: var(--font-body), 'Nunito', sans-serif; font-weight: 700; font-size: 3.4mm; color: ${MUTED}; }
