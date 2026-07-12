@@ -34,6 +34,9 @@ const PURPLE = "#8a6cff";
 const BLUE = "#3da5ff";
 const BLUE_D = "#2f7fd0";
 
+/** The print palette, for the sibling book builders (maze-book, sudoku-book). */
+export const PRINT_COLORS = { INK, INK_SOFT, MUTED, PINK, PINK_D, YELLOW, TEAL, TEAL_D, PURPLE, BLUE, BLUE_D };
+
 export interface PrintOpts {
   language?: LanguageId;
   childName?: string;
@@ -48,9 +51,14 @@ export interface PrintOpts {
    * When omitted the cover shows the plain name + the neutral subtitle instead.
    */
   possessive?: string;
+  /**
+   * Child's age — drives puzzle difficulty in the age-adaptive books (maze,
+   * sudoku). Each book clamps it to its own window and ramps within the book.
+   */
+  age?: number;
 }
 
-function escapeHtml(s: string): string {
+export function escapeHtml(s: string): string {
   return s.replace(/[&<>"']/g, (c) =>
     ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c] as string,
   );
@@ -61,7 +69,7 @@ function escapeHtml(s: string): string {
  * export script (scripts/print-book.mjs) reads `data-leaf` to name each PNG, so
  * a broken page is easy to point at ("fix letter-Ž"). Harmless on the route.
  */
-function tagLeaf(html: string, label: string): string {
+export function tagLeaf(html: string, label: string): string {
   return html.replace('<section class="leaf"', `<section data-leaf="${label}" class="leaf"`);
 }
 
@@ -232,7 +240,7 @@ function coverNameSize(len: number): number {
 
 const coverHeart = `<svg viewBox="0 0 24 24" width="11mm" height="11mm" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#e8243a"/></svg>`;
 
-function coverLeaf(
+export function coverLeaf(
   name: string,
   possessive: string,
   subtitle: string,
@@ -296,7 +304,7 @@ function confetti(): string {
 }
 
 /** White card filling the leaf, confetti behind centred content. */
-function popCard(content: string, gap = 6, topAnchor = false): string {
+export function popCard(content: string, gap = 6, topAnchor = false): string {
   // topAnchor pulls content toward the top of the leaf (used by the diploma so
   // the rosette badge rides high) instead of being vertically centred.
   const popStyle = topAnchor ? ' style="justify-content:flex-start;padding-top:34mm"' : "";
@@ -389,7 +397,7 @@ function posvetaFontSize(len: number): number {
   return 6.2;
 }
 
-function posvetaLeaf(text: string): string {
+export function posvetaLeaf(text: string): string {
   const clean = text.replace(/\r/g, "").replace(/\n{3,}/g, "\n\n").trim();
   const fs = posvetaFontSize(clean.length);
   return popCard(
@@ -398,7 +406,7 @@ function posvetaLeaf(text: string): string {
   );
 }
 
-function diplomaLeaf(
+export function diplomaLeaf(
   fullName: string,
   title: string,
   intro: string,
@@ -981,8 +989,7 @@ function colourByNumberBalloonSvg(): string {
 }
 
 /** The colour-by-number leaf: legend of 10 swatches, then the balloon. */
-function colourByNumberTestLeaf(childName: string): string {
-  const footer = `moji prvi brojevi · ${(childName || "Ema").toUpperCase()}`;
+function colourByNumberLeaf(footer: string, pageNo: number): string {
   const legend = CBN_LEGEND
     .map(({ n, hex }) => `<div class="cbn-swatch" style="background:${hex}"><span class="cbn-badge">${n}</span></div>`)
     .join("");
@@ -991,12 +998,13 @@ function colourByNumberTestLeaf(childName: string): string {
     <div class="cbn-legend">${legend}</div>
     <div class="npg-scene">${colourByNumberBalloonSvg()}</div>
     <div class="lp-foot">${escapeHtml(footer)}</div>
-  </div><div class="lp-pageno">1</div></section>`;
+  </div><div class="lp-pageno">${pageNo}</div></section>`;
 }
 
 /** Single-leaf test build: just the colour-by-number balloon page. */
 export function buildColourByNumberTestLeaves(childName = "Ema"): string[] {
-  return [tagLeaf(colourByNumberTestLeaf(childName), "colour-by-number-test")];
+  const footer = `moji prvi brojevi · ${(childName || "Ema").toUpperCase()}`;
+  return [tagLeaf(colourByNumberLeaf(footer, 1), "colour-by-number-test")];
 }
 
 // ── Numbers v2 prototype — ladybug draw-the-dots leaf ─────────────
@@ -1120,6 +1128,10 @@ export function buildNumbersV2PrintLeaves(opts: PrintOpts = {}): string[] {
     activityPage++;
   }
   leaves.push(tagLeaf(ladybugDotsLeaf(footer, activityPage), "ladybug-dots"));
+  activityPage++;
+  // The colour-by-number balloon closes the activity arc — the big colouring
+  // reward right before the diploma.
+  leaves.push(tagLeaf(colourByNumberLeaf(footer, activityPage), "colour-by-number"));
   activityPage++;
   leaves.push(tagLeaf(diplomaLeaf(fullName, s.diplomaTitle, s.diplomaIntro, s.diplomaBody(opts.gender), opts.gender, s.diplomaCheer), "diploma"));
   return leaves;
@@ -1277,6 +1289,20 @@ export const PRINT_CSS = `
   .pop-in { position: relative; display: flex; flex-direction: column; align-items: center; width: 100%; }
   .tile { width: 17mm; height: 17mm; border-radius: 5mm; display: grid; place-items: center; }
   .tile-i { width: 8mm; height: 8mm; }
+
+  /* Maze book: one maze fills the free height, centred. Sized in mm by the
+     builder; max-* only guards against overflow on extreme aspect ratios. */
+  .mz-scene { flex: 1; min-height: 0; margin-top: 5mm; display: flex; align-items: center; justify-content: center; }
+  .mz-scene svg { max-width: 100%; max-height: 100%; }
+
+  /* Sudoku book */
+  .npg-eyebrow + .npg-instruction { margin-top: 2.5mm; }
+  .sud-grid { flex: 1; min-height: 0; margin-top: 6mm; display: flex; align-items: center; justify-content: center; }
+  .sud-grid svg { max-width: 100%; max-height: 100%; }
+  /* Solutions pages: mini solved grids, two columns, filled top-down. */
+  .sud-sols { flex: 1; min-height: 0; margin-top: 6mm; display: grid; grid-template-columns: repeat(2, 1fr); gap: 4mm; justify-items: center; align-content: start; }
+  .sud-sol { display: flex; flex-direction: column; align-items: center; gap: 1.2mm; }
+  .sud-sol-label { font-family: var(--font-body), 'Nunito', sans-serif; font-weight: 700; font-size: 3.4mm; color: ${MUTED}; }
 
   /* Screen-only book-preview chrome — never printed */
   @media screen {
