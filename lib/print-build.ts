@@ -715,8 +715,7 @@ const CUBE_STACKS: Array<{ rows: number[]; shade: CubeShade }> = [
 ];
 
 /** The two-task leaf: dice↔number matching + count-the-cubes. */
-function numberTasksTestLeaf(childName: string): string {
-  const footer = `moji prvi brojevi · ${childName.toUpperCase()}`;
+function numberTasksLeaf(footer: string, pageNo: number): string {
   // Mixed so no die sits above its own number (a straight-down line is no fun).
   const diceOrder = [3, 6, 1, 5, 2, 4];
   const dice = diceOrder
@@ -739,12 +738,13 @@ function numberTasksTestLeaf(childName: string): string {
       <div class="npg-stacks">${stacks}</div>
     </div>
     <div class="lp-foot">${escapeHtml(footer)}</div>
-  </div></section>`;
+  </div><div class="lp-pageno">${pageNo}</div></section>`;
 }
 
 /** Single-leaf test build: just the dice + cube-stacks tasks prototype page. */
 export function buildNumberTasksTestLeaves(childName = "Ema"): string[] {
-  return [tagLeaf(numberTasksTestLeaf(childName), "numbers-tasks-test")];
+  const footer = `moji prvi brojevi · ${(childName || "Ema").toUpperCase()}`;
+  return [tagLeaf(numberTasksLeaf(footer, 1), "numbers-tasks-test")];
 }
 
 // ── Numbers v2 — "missing numbers" shirts leaf ────────────────────
@@ -999,6 +999,79 @@ export function buildColourByNumberTestLeaves(childName = "Ema"): string[] {
   return [tagLeaf(colourByNumberTestLeaf(childName), "colour-by-number-test")];
 }
 
+// ── Numbers v2 prototype — ladybug draw-the-dots leaf ─────────────
+// "Nacrtaj točkice na praznom krilu!": five ladybugs on leaves, each with the
+// numeral printed on its LEFT wing and the RIGHT wing empty — the child DRAWS
+// that many spots, the one production skill (making a quantity, not reading or
+// counting one) no other page trains. PURE CODE. Light-tint fills like the
+// dice/tasks page so pencil dots stay visible on the wing.
+
+/** The wing numbers, one per bug, top-left → bottom-right (quincunx order). */
+const LADYBUG_NUMBERS = [2, 4, 5, 7, 10];
+
+/** Five ladybugs-on-leaves in a quincunx, each in its own 52×46 cell. */
+function ladybugDotsSvg(): string {
+  const RED_D = "#d64545", RED_T = "#ffe7e4", GREEN_D = "#4b9a50", GREEN_T = "#e8f5e4";
+  // One bug in local coords (cell 0 0 52 46): leaf behind, body circle split
+  // into two wings, dark head with antennae, three little legs per side.
+  const bug = (n: number): string => {
+    const legs = [150, 180, 210]
+      .map((deg) => {
+        const a = (deg * Math.PI) / 180;
+        const [c, s] = [Math.cos(a), Math.sin(a)];
+        const line = (sx: number, sy: number, ex: number, ey: number) =>
+          `<line x1="${sx.toFixed(1)}" y1="${sy.toFixed(1)}" x2="${ex.toFixed(1)}" y2="${ey.toFixed(1)}" stroke="${INK_SOFT}" stroke-width="0.7" stroke-linecap="round"/>`;
+        // A leg on each side, mirrored around the body's centre x = 26.
+        return (
+          line(26 + 15.5 * c, 23 + 15.5 * s, 26 + 19.5 * c, 23 + 19.5 * s) +
+          line(26 - 15.5 * c, 23 + 15.5 * s, 26 - 19.5 * c, 23 + 19.5 * s)
+        );
+      })
+      .join("");
+    return (
+      `<path d="M2 38 Q14 18, 50 24 Q40 46, 8 44 Q0 42, 2 38 Z" fill="${GREEN_T}" stroke="${GREEN_D}" stroke-width="0.7" stroke-linejoin="round"/>` +
+      `<path d="M6 40 Q24 30, 46 26" fill="none" stroke="${GREEN_D}" stroke-width="0.55" stroke-linecap="round"/>` +
+      legs +
+      `<path d="M23.8 4.4 Q21.5 1.6, 19.8 1.2" fill="none" stroke="${INK_SOFT}" stroke-width="0.7" stroke-linecap="round"/>` +
+      `<circle cx="19.4" cy="1.1" r="0.8" fill="${INK_SOFT}"/>` +
+      `<path d="M28.2 4.4 Q30.5 1.6, 32.2 1.2" fill="none" stroke="${INK_SOFT}" stroke-width="0.7" stroke-linecap="round"/>` +
+      `<circle cx="32.6" cy="1.1" r="0.8" fill="${INK_SOFT}"/>` +
+      `<circle cx="26" cy="9" r="5.4" fill="${INK_SOFT}"/>` +
+      `<circle cx="26" cy="23" r="15.5" fill="${RED_T}" stroke="${RED_D}" stroke-width="1"/>` +
+      `<line x1="26" y1="7.5" x2="26" y2="38.5" stroke="${RED_D}" stroke-width="0.8"/>` +
+      `<text x="18.5" y="23.5" text-anchor="middle" dominant-baseline="central" style="font-family:var(--font-body),'Nunito',sans-serif;font-weight:800;font-size:9px;fill:${INK}">${n}</text>`
+    );
+  };
+  // Quincunx cells: two up top, one in the middle, two below; tiny alternating
+  // tilts (around each cell's centre) so the bugs feel alive, not gridded.
+  const cells: Array<{ x: number; y: number; r: number }> = [
+    { x: 3, y: 0, r: -4 },
+    { x: 61, y: 0, r: 3 },
+    { x: 32, y: 52, r: -2 },
+    { x: 3, y: 104, r: 3 },
+    { x: 61, y: 104, r: -4 },
+  ];
+  const bugs = cells
+    .map((c, i) => `<g transform="translate(${c.x} ${c.y}) rotate(${c.r} 26 23)">${bug(LADYBUG_NUMBERS[i])}</g>`)
+    .join("");
+  return `<svg viewBox="0 0 116 150" aria-hidden="true">${bugs}</svg>`;
+}
+
+/** The ladybug draw-the-dots leaf. */
+function ladybugDotsLeaf(footer: string, pageNo: number): string {
+  return `<section class="leaf"><div class="npg">
+    <div class="npg-instruction">Nacrtaj točkice na praznom krilu!</div>
+    <div class="npg-scene">${ladybugDotsSvg()}</div>
+    <div class="lp-foot">${escapeHtml(footer)}</div>
+  </div><div class="lp-pageno">${pageNo}</div></section>`;
+}
+
+/** Single-leaf test build: just the ladybug draw-the-dots page. */
+export function buildLadybugTestLeaves(childName = "Ema"): string[] {
+  const footer = `moji prvi brojevi · ${(childName || "Ema").toUpperCase()}`;
+  return [tagLeaf(ladybugDotsLeaf(footer, 1), "ladybug-dots-test")];
+}
+
 // v2 is 1–10 (not 0–9), so the diploma line needs its own wording; everything
 // else (cover/posveta/name/diploma chrome) is shared with NUMBER_STRINGS.
 const NUMBER_STRINGS_V2 = {
@@ -1035,7 +1108,19 @@ export function buildNumbersV2PrintLeaves(opts: PrintOpts = {}): string[] {
     activityPage++;
   }
   const kite = connectDotsKiteLeaf(footer, activityPage);
-  if (kite) leaves.push(tagLeaf(kite, "kite-dots"));
+  if (kite) {
+    leaves.push(tagLeaf(kite, "kite-dots"));
+    activityPage++;
+  }
+  leaves.push(tagLeaf(numberTasksLeaf(footer, activityPage), "numbers-tasks"));
+  activityPage++;
+  const zoo = zooCountLeaf(footer, activityPage);
+  if (zoo) {
+    leaves.push(tagLeaf(zoo, "zoo-count"));
+    activityPage++;
+  }
+  leaves.push(tagLeaf(ladybugDotsLeaf(footer, activityPage), "ladybug-dots"));
+  activityPage++;
   leaves.push(tagLeaf(diplomaLeaf(fullName, s.diplomaTitle, s.diplomaIntro, s.diplomaBody(opts.gender), opts.gender, s.diplomaCheer), "diploma"));
   return leaves;
 }
