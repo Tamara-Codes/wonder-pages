@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ShopHeader } from "@/components/shop-header";
 
 /**
- * Privacy notice for the order flow. Wonder Pages collects buyer + delivery
+ * Privacy notice for the order flow. Maštograd collects buyer + delivery
  * details and the child's personalization (name, age, etc.) to fulfil a manual
  * order — no online payment, no marketing profiling. Croatian only.
  *
@@ -12,7 +12,7 @@ import { ShopHeader } from "@/components/shop-header";
  * empty until the obrt is registered (the line is hidden when empty).
  */
 const CONTACT_EMAIL = "codewithtamara@gmail.com"; // ← set your business contact email
-const BUSINESS_NAME = "Moja slova"; // brand / trading name
+const BUSINESS_NAME = "Maštograd"; // brand / trading name
 const BUSINESS_LEGAL = ""; // registered obrt name once you have it (optional)
 const BUSINESS_OIB = ""; // OIB once registered (optional; hidden when empty)
 const LAST_UPDATED = "18.06.2026.";

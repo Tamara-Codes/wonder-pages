@@ -46,3 +46,10 @@ next-env.d.ts
 
 # supabase local
 supabase/.temp/
+
+# per-page print export (scripts/print-book.mjs)
+/print-out/
+
+# local db dumps + scratch renders
+/db-backup-*/
+/numbers-*test*.png

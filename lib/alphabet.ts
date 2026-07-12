@@ -83,17 +83,17 @@ const EN: AlphabetEntry[] = [
 const HR: AlphabetEntry[] = [
   { letter: "A", word: "Avion", iconKey: "airplane" },
   { letter: "B", word: "Banana", iconKey: "banana" },
-  { letter: "C", word: "Cipela", iconKey: "shoe" },
+  { letter: "C", word: "Cvijet", iconKey: "tulip" },
   { letter: "Č", word: "Čarapa", iconKey: "socks" },
   { letter: "Ć", word: "Ćup", iconKey: "jug" }, // amphora
-  { letter: "D", word: "Delfin", iconKey: "dolphin" },
+  { letter: "D", word: "Deva", iconKey: "camel" },
   { letter: "Dž", word: "Džem", iconKey: "jam" }, // jar of spread
   { letter: "Đ", word: "Đak", iconKey: "pupil" }, // school bag
   { letter: "E", word: "Elisa", iconKey: "propeller" }, // elisa = propeller (helicopter/motor)
-  { letter: "F", word: "Frula", iconKey: "flute" },
+  { letter: "F", word: "Farma", iconKey: "barn" },
   { letter: "G", word: "Gitara", iconKey: "guitar" },
   { letter: "H", word: "Helikopter", iconKey: "helicopter" },
-  { letter: "I", word: "Igla", iconKey: "needle" },
+  { letter: "I", word: "Indijanac", iconKey: "indian" },
   { letter: "J", word: "Jabuka", iconKey: "apple" },
   { letter: "K", word: "Krava", iconKey: "cow" },
   { letter: "L", word: "Lav", iconKey: "lion" },

@@ -1,8 +1,8 @@
 /**
- * Moja slova brand mark + wordmark lockup.
+ * Maštograd brand mark + wordmark lockup.
  *
  * WonderMark    — the app icon: three playful A B C blocks (pink/teal/purple).
- * BrandLockup   — icon + "Moja" (pink) + "slova" (teal). Render it INSIDE a
+ * BrandLockup   — icon + "Mašto" (pink) + "grad" (teal). Render it INSIDE a
  *                 wrapper (<Link>/<span>) that sets the font-display size, e.g.
  *                 the page headers.
  */
@@ -36,7 +36,7 @@ export function WonderMark({
             textAnchor="middle"
             dominantBaseline="central"
             fill="#fff"
-            style={{ fontFamily: "var(--font-display), 'Baloo 2', system-ui, sans-serif", fontWeight: 800, fontSize: 24 }}
+            style={{ fontFamily: "var(--font-baloo), 'Baloo 2', system-ui, sans-serif", fontWeight: 800, fontSize: 24 }}
           >
             {b.letter}
           </text>
@@ -51,8 +51,8 @@ export function BrandLockup({ markSize = 30 }: { markSize?: number }) {
     <>
       <WonderMark size={markSize} />
       <span>
-        <span style={{ color: "var(--pink)" }}>Moja</span>{" "}
-        <span style={{ color: "var(--teal)" }}>slova</span>
+        <span style={{ color: "var(--pink)" }}>Mašto</span>
+        <span style={{ color: "var(--teal)" }}>grad</span>
       </span>
     </>
   );

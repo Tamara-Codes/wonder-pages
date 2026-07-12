@@ -2,10 +2,12 @@
  * Croatian copy for the shop landing page (app/page.tsx).
  *
  * The landing sells the FORMAT — a personalized keepsake of sturdy leaves (one
- * letter per leaf) in a cardboard gift box. Currently a single product: the
- * alphabet set "Moja prva abeceda" (numbers/bundle kept in code but NOT surfaced
- * here). Per-product names/prices come from lib/landing-copy.ts
- * (COPY.products.cards) and lib/products.ts (never hard-code prices here).
+ * letter or number per leaf) in a cardboard gift box. Two products share this
+ * format and this copy: the alphabet set "Moja prva abeceda" and the numbers
+ * set "Moji prvi brojevi" — so the hero/format/leaf sections stay generic
+ * ("prva slova ili brojevi"), not alphabet-specific. Per-product names/prices
+ * come from lib/landing-copy.ts (COPY.products.cards) and lib/products.ts
+ * (never hard-code prices here).
  *
  * Kept separate from lib/landing-copy.ts (which drives the /products catalog,
  * the configure wizard and the order form) so the landing's framing can change
@@ -28,11 +30,9 @@ export interface AlphabetLandingCopy {
     coverLabel: string; // subtitle under the name on the personalized front leaf
   };
   trust: string[];
-  // the format explainer — "a box of letters, not a book" (image carousel)
+  // the format explainer — photo carousel only, no heading (removed 2026-07-11)
   format: {
-    heading: string;
-    sub: string;
-    // one caption per carousel image (box · box + leaves · colored leaves)
+    // one caption per carousel image (used as alt text)
     slides: { caption: string }[];
   };
   // what a child does on every leaf
@@ -50,14 +50,14 @@ export interface AlphabetLandingCopy {
 
 export const ALPHABET_COPY: AlphabetLandingCopy = {
   hero: {
-      eyebrow: "Personalizirani poklon za prve korake u učenju",
-      title: "Moja prva {name} — poklon koji se pamti",
-      titleName: "abeceda",
-      titleBox: "",
+      eyebrow: "Personalizirani pokloni za prve korake u učenju",
+      title: "Moja prva {name} i {box} – pokloni koji se pamte",
+      titleName: "slova",
+      titleBox: "brojevi",
       subtitle:
-        "Personalizirani poklon za djecu od 3 do 6 godina: cijela abeceda, s imenom djeteta, posvetom i diplomom, svako slovo na svom listiću.",
+        "Personalizirani poklon za djecu od 3 do 6 godina: prva slova ili prvi brojevi, s imenom djeteta, posvetom i diplomom, svako slovo ili broj na svom listiću.",
       cta: "Naruči odmah",
-      badgeLeaf: "Slova A–Ž",
+      badgeLeaf: "Slova A–Ž ili brojevi 0–9",
       badgeBox: "U poklon-vrećici",
       personalized: "Personalizirano imenom djeteta",
       coverLabel: "moja prva slova",
@@ -65,28 +65,28 @@ export const ALPHABET_COPY: AlphabetLandingCopy = {
     trust: [
       "Personalizirano imenom djeteta",
       "Za uzrast 3 do 6 godina",
+      "Edukativno",
+      "Napravljeno s ljubavlju u Hrvatskoj",
     ],
     format: {
-      heading: "Listići u poklon vrećici",
-      sub: "Stiže kao zbirka zasebnih listića u ukrasnoj poklon vrećici, s posvetom, listićem s imenom i završnom diplomom.",
       slides: [
         { caption: "Stiže u ukrasnoj poklon vrećici s personaliziranim privjeskom, spremno za darivanje." },
-        { caption: "Personalizirana naslovnica i po jedan listić za svako slovo — dijete oboji znak i sličicu, pa slovo napiše na crtama." },
+        { caption: "Personalizirana naslovnica i po jedan listić za svako slovo ili broj — dijete oboji znak i sličicu, pa ga napiše na crtama." },
       ],
     },
     leaf: {
       heading: "Što dijete radi na svakom listiću",
       sub: "Tri stvari na svakom listiću: boji, prepoznaje i piše.",
       steps: [
-        { title: "Oboji veliko slovo", copy: "Veliko šuplje slovo ispunjeno je za bojanje, uči se oblik kroz boju." },
-        { title: "Oboji sličicu", copy: "Sličica uz svako slovo („A kao Avion”) za bojanje i prepoznavanje glasa." },
-        { title: "Vježba pisanja", copy: "Crte za pisanje s blijedim znakom za precrtavanje, prvi koraci u pisanju." },
+        { title: "Oboji veliko slovo ili broj", copy: "Veliki šuplji znak ispunjen je za bojanje, uči se oblik kroz boju." },
+        { title: "Oboji sličicu", copy: "Sličica uz svako slovo ili broj za bojanje i prepoznavanje." },
+        { title: "Vježba pisanje", copy: "Crte za pisanje s blijedim znakom za precrtavanje, prvi koraci u pisanju." },
       ],
     },
     pricing: {
       heading: "Cijena",
       includes: [
-        "Listić za svako slovo abecede",
+        "Listić za svako slovo abecede ili svaki broj",
         "Osobna posveta i diploma s imenom djeteta",
         "Ukrasna poklon-vrećica s privjeskom",
         "Ručni tisak i dostava u Hrvatskoj",
@@ -96,12 +96,11 @@ export const ALPHABET_COPY: AlphabetLandingCopy = {
     faq: {
       heading: "Česta pitanja",
       items: [
-        { q: "Je li to knjiga?", a: "Nije, to je zbirka zasebnih listića (po jedan za svako slovo), svaki gotov za bojanje i pisanje. Dijete uzima listić po listić, a sve stiže lijepo zapakirano kao poklon." },
-        { q: "Što sve dijete dobije?", a: "Cijelu abecedu, a uz to posvetu, listić s imenom te završnu diplomu, svako na svom listiću." },
+        { q: "Je li to knjiga?", a: "Nije, to je zbirka zasebnih listića (po jedan za svako slovo ili broj), svaki gotov za bojanje i pisanje. Dijete uzima listić po listić, a sve stiže lijepo zapakirano kao poklon." },
         { q: "Kako se plaća?", a: "Za sada isključivo uplatom na račun (IBAN), bez plaćanja online. Narudžbu šaljete bez plaćanja, na e-mail dobivate upute za uplatu i plaćate tek nakon toga. Uskoro ćemo omogućiti plaćanje karticom." },
-        { q: "Za koju je dob?", a: "Za djecu od 3 do 6 godina koja uče slova i prve korake u pisanju." },
-        { q: "Mogu li ga poslati izravno djetetu?", a: "Da. Dostavljamo na vašu adresu ili izravno na adresu djeteta, kako želite." },
+        { q: "Za koju je dob?", a: "Za djecu od 3 do 6 godina koja uče slova, brojeve i prve korake u pisanju." },
+        { q: "Mogu li ga poslati izravno djetetu?", a: "Da. Dostavljamo na Vašu adresu ili izravno na adresu djeteta, kako želite." },
       ],
     },
-    footer: "Ručno izrađeno s ljubavlju za radoznalu djecu · Moja slova",
+    footer: "Ručno izrađeno s ljubavlju za radoznalu djecu · Maštograd",
 };

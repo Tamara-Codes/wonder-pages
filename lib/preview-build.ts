@@ -125,7 +125,7 @@ function handwritingSvg(glyph: string, accent: string): string {
 
 /** One rounded "alphabet block" (A/B/C) for the cover. */
 function abcBlock(ch: string, bg: string, fg: string, rot: number): string {
-  return `<span style="display:inline-grid;place-items:center;width:54px;height:54px;border-radius:14px;background:${bg};color:${fg};font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:800;font-size:34px;transform:rotate(${rot}deg);box-shadow:0 4px 0 rgba(43,36,64,.14);">${ch}</span>`;
+  return `<span style="display:inline-grid;place-items:center;width:54px;height:54px;border-radius:14px;background:${bg};color:${fg};font-family:var(--font-baloo),'Baloo 2',sans-serif;font-weight:800;font-size:34px;transform:rotate(${rot}deg);box-shadow:0 4px 0 rgba(43,36,64,.14);">${ch}</span>`;
 }
 
 /** A whole word in big SOLID letters; long names fill the leaf width. */
@@ -136,7 +136,7 @@ function solidWordSvg(text: string, color: string): string {
   const fs = Math.min(MAX, Math.round(TARGET / (0.6 * len)));
   const fit = len >= 7 ? ` textLength="${TARGET}" lengthAdjust="spacingAndGlyphs"` : "";
   return `<svg viewBox="0 0 400 124" style="width:100%" aria-hidden="true">
-    <text x="200" y="90" text-anchor="middle"${fit} style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:800;font-size:${fs}px;fill:${color};">${escapeHtml(text)}</text>
+    <text x="200" y="90" text-anchor="middle"${fit} style="font-family:var(--font-baloo),'Baloo 2',sans-serif;font-weight:800;font-size:${fs}px;fill:${color};">${escapeHtml(text)}</text>
   </svg>`;
 }
 
@@ -180,7 +180,7 @@ function alphabetPageHtml(
     : `<div style="flex:1;width:80%;min-height:0;display:grid;place-items:center;margin:2px 0;">${iconLineArt(iconKey, accent).replace("<svg", '<svg style="max-width:100%;max-height:100%;height:auto;width:auto"')}</div>`;
   return `<div style="aspect-ratio:210/297;background:#fff;border:1px solid #EFE7DA;border-radius:18px;padding:16px 22px 14px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;text-align:center;">
     <div style="display:flex;align-items:baseline;justify-content:center;gap:9px;">
-      <span style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:800;font-size:56px;line-height:1;color:#fff;-webkit-text-stroke:5px ${accent};paint-order:stroke fill;">${escapeHtml(letter)}</span>
+      <span style="font-family:var(--font-baloo),'Baloo 2',sans-serif;font-weight:800;font-size:56px;line-height:1;color:#fff;-webkit-text-stroke:5px ${accent};paint-order:stroke fill;">${escapeHtml(letter)}</span>
       <span style="font-family:var(--font-hand),'Caveat',cursive;font-weight:700;font-size:31px;line-height:1;color:${accent};">${escapeHtml(connective)}</span>
     </div>
     ${picture}
@@ -232,7 +232,7 @@ function popHeading(
   opts: { size?: number; spacing?: number; upper?: boolean } = {},
 ): string {
   const upper = opts.upper ? "text-transform:uppercase;" : "";
-  return `<div style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:800;font-size:${opts.size ?? 22}px;letter-spacing:${opts.spacing ?? 0}px;${upper}color:${color};line-height:1.1;">${escapeHtml(text)}</div>`;
+  return `<div style="font-family:var(--font-baloo),'Baloo 2',sans-serif;font-weight:800;font-size:${opts.size ?? 22}px;letter-spacing:${opts.spacing ?? 0}px;${upper}color:${color};line-height:1.1;">${escapeHtml(text)}</div>`;
 }
 
 // Scattered confetti behind the content — dots + little rotated squares, spread
@@ -291,7 +291,7 @@ function hollowWordSvg(text: string, accent: string): string {
   // Names long enough to reach the target width get pinned to it (fill the leaf).
   const fit = len >= 7 ? ` textLength="${TARGET}" lengthAdjust="spacingAndGlyphs"` : "";
   return `<svg viewBox="0 0 400 130" style="width:100%" aria-hidden="true">
-    <text x="200" y="92" text-anchor="middle"${fit} style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:800;font-size:${fs}px;fill:#fff;stroke:${accent};stroke-width:5;stroke-linejoin:round;paint-order:stroke;">${escapeHtml(text)}</text>
+    <text x="200" y="92" text-anchor="middle"${fit} style="font-family:var(--font-baloo),'Baloo 2',sans-serif;font-weight:800;font-size:${fs}px;fill:#fff;stroke:${accent};stroke-width:5;stroke-linejoin:round;paint-order:stroke;">${escapeHtml(text)}</text>
   </svg>`;
 }
 
@@ -317,7 +317,7 @@ function wordTraceSvg(text: string, accent: string): string {
   const avail = W - 24;
   const natural = 0.6 * F * Math.max(text.length, 1);
   const fit = natural > avail ? ` textLength="${avail}" lengthAdjust="spacingAndGlyphs"` : "";
-  const ghost = `<text x="${W / 2}" y="${yb1}" text-anchor="middle"${fit} style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:${F}px;fill:${accent};fill-opacity:.3">${escapeHtml(text)}</text>`;
+  const ghost = `<text x="${W / 2}" y="${yb1}" text-anchor="middle"${fit} style="font-family:var(--font-baloo),'Baloo 2',sans-serif;font-weight:700;font-size:${F}px;fill:${accent};fill-opacity:.3">${escapeHtml(text)}</text>`;
   return `<svg viewBox="0 0 ${W} ${yb2 + 14}" style="width:100%" aria-hidden="true">${row(yt1, ym1, yb1)}${ghost}${row(yt2, ym2, yb2)}</svg>`;
 }
 
@@ -444,7 +444,7 @@ function numberPageHtml(entry: NumberEntry): string {
   const accent = ALPHA_ACCENT;
   return `<div style="aspect-ratio:210/297;background:#fff;border:1px solid #EFE7DA;border-radius:18px;padding:16px 22px 14px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;text-align:center;">
     <div style="display:flex;align-items:baseline;justify-content:center;gap:10px;">
-      <span style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:800;font-size:56px;line-height:1;color:#fff;-webkit-text-stroke:5px ${accent};paint-order:stroke fill;">${escapeHtml(entry.digit)}</span>
+      <span style="font-family:var(--font-baloo),'Baloo 2',sans-serif;font-weight:800;font-size:56px;line-height:1;color:#fff;-webkit-text-stroke:5px ${accent};paint-order:stroke fill;">${escapeHtml(entry.digit)}</span>
       <span style="font-family:var(--font-hand),'Caveat',cursive;font-weight:700;font-size:31px;line-height:1;color:${accent};">${escapeHtml(entry.word)}</span>
     </div>
     ${countPictureHtml(entry)}

@@ -261,7 +261,7 @@ export const COPY: Copy = {
         alphabet: {
           name: "Moja prva abeceda",
           tagline: "Cijela abeceda — slovo i sličica na svakom listiću.",
-          contents: ["Slovo, riječ i sličica za bojanje", "Vježba pisanja na crtama", "Hrvatska ili engleska abeceda"],
+          contents: ["Slovo, riječ i sličica za bojanje", "Vježba pisanja na crtama", "Personalizirano imenom djeteta"],
         },
         numbers: {
           name: "Moji prvi brojevi",
@@ -344,7 +344,7 @@ export const COPY: Copy = {
       childLabel: "Dijete",
       addChild: "Dodaj još jedno dijete",
       removeChild: "Ukloni",
-      multiChildHint: "Jedan komplet po djetetu. Naručujete za više djece? Dodajte svako sa svojim imenom.",
+      multiChildHint: "Svako dijete dobiva svoj poklon s vlastitim imenom. Naručujete za više djece? Dodajte svako posebno.",
       total: "Ukupno",
     },
     sample: {
@@ -454,5 +454,5 @@ export const COPY: Copy = {
         { q: "Mogu li je poslati izravno djetetu?", a: "Da — dostavljamo na vašu adresu ili izravno na adresu djeteta, kako želite." },
       ],
     },
-    footer: "Ručno izrađeno s ljubavlju za radoznalu djecu · Moja slova",
+    footer: "Ručno izrađeno s ljubavlju za radoznalu djecu · Maštograd",
 };

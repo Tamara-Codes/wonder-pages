@@ -4,6 +4,11 @@
    Wonder Pages — "Confetti Pop" design system
    Matches our sister app (zabava-za-djecu). Solid colours only.
    No gradients. Flat offset shadows. Vibrant, toy-like, friendly.
+
+   Palette softened 2026-07-11 to match the Maštograd castle logo: pink
+   moved from a vivid magenta to the logo's coral/salmon, teal/yellow
+   desaturated + lightened to the sampled logo tones, purple/orange/blue
+   softened by the same amount for a coherent pastel-leaning palette.
    ============================================================ */
 :root {
   --background: #fffbf2;
@@ -12,19 +17,33 @@
   --border: #efe7da; /* line */
   --card: #ffffff;
 
-  --pink: #ff5ca8;
-  --pink-d: #d63f86;
-  --yellow: #ffc93c;
-  --teal: #21c7b6;
-  --teal-d: #16a596;
-  --purple: #8a6cff;
-  --purple-d: #6f4fe0;
-  --orange: #ff7a45;
-  --blue: #3da5ff;
+  /* Pink shifted from red-coral toward a true rose (Tamara: "less red and
+     less coral and more pink") — keep this hue, do not drift back to red. */
+  --pink: #f48fa5;
+  --pink-d: #e05578;
+  --yellow: #f7bc4d;
+  --yellow-d: #9a6a14;
+  --teal: #38b8ae;
+  --teal-d: #2a8982;
+  --purple: #a08bf5;
+  --purple-d: #866fd4;
+  --orange: #f28e67;
+  --blue: #5fadf1;
+
+  /* Soft tints of the logo colours — chips/pills only (NOT section bands). */
+  --pink-soft: #fdedf2;
+  --teal-soft: #e8f5f3;
+  --yellow-soft: #fdf3dd;
+
+  /* Section bands: a deeper warm linen on the cream base ("warm paper"). */
+  --linen: #f6efe3;
+
+  /* The soft brand teal — section panel, ALL buttons (with ink text), accents. */
+  --teal-light: #8fd0ca;
 
   /* Brand action colour = teal (consistent with sister app) */
-  --brand: #21c7b6;
-  --brand-ink: #16a596;
+  --brand: #38b8ae;
+  --brand-ink: #2a8982;
 
   --radius: 24px;
 }
@@ -43,7 +62,7 @@
   --color-purple: var(--purple);
   --color-orange: var(--orange);
   --color-blue: var(--blue);
-  --font-display: var(--font-display);
+  --font-display: var(--font-logo);
   --font-body: var(--font-body);
   --font-label: var(--font-label);
 }
@@ -63,8 +82,13 @@ body {
   overflow-x: clip;
 }
 
+/* Display face = the logo's marker script (Sriracha, single 400 weight).
+   font-synthesis: none stops browsers faux-bolding it under font-bold /
+   font-extrabold utilities, which would smear the strokes. */
 .font-display {
-  font-family: var(--font-display), system-ui, cursive;
+  font-family: var(--font-logo), var(--font-baloo), system-ui, cursive;
+  font-synthesis: none;
+  font-weight: 400;
 }
 .font-label {
   font-family: var(--font-label), system-ui, sans-serif;
@@ -98,12 +122,12 @@ body {
   color: #fff;
 }
 
-/* ── Flat offset "stacked sticker" shadows ───────────────────── */
+/* ── Soft ink-tinted card shadows ────────────────────────────── */
 .shadow-pop {
-  box-shadow: 0 6px 0 rgba(43, 36, 64, 0.08);
+  box-shadow: 0 14px 34px -14px rgba(43, 36, 64, 0.18);
 }
 .shadow-pop-sm {
-  box-shadow: 0 4px 0 rgba(43, 36, 64, 0.07);
+  box-shadow: 0 8px 20px -10px rgba(43, 36, 64, 0.14);
 }
 
 /* ── Lift on hover ───────────────────────────────────────────── */
@@ -126,14 +150,14 @@ body {
 
 /* ── Teal action button with coloured glow ──────────────────── */
 .btn-glow {
-  box-shadow: 0 6px 16px rgba(33, 199, 182, 0.38);
+  box-shadow: 0 6px 16px rgba(143, 208, 202, 0.55);
   transition:
     transform 0.14s ease,
     box-shadow 0.14s ease;
 }
 .btn-glow:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 12px 24px rgba(33, 199, 182, 0.46);
+  box-shadow: 0 12px 24px rgba(143, 208, 202, 0.68);
 }
 .btn-glow:active:not(:disabled) {
   transform: translateY(0);

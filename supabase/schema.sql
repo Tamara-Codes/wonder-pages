@@ -79,11 +79,11 @@ create table if not exists public.order_requests (
   quantity      integer not null default 1 check (quantity between 1 and 20),
   -- the gift (who it's for) + personalization
   product       text not null default 'alphabet'
-                check (product in ('activity','alphabet','bundle')),
+                check (product in ('activity','alphabet','numbers','bundle')),
   child_name    text,
   child_surname text,                 -- alphabet: shown on the diploma leaf
   child_gender  text check (child_gender in ('boy','girl')),  -- alphabet: diploma wording (Naučio/Naučila)
-  child_age     integer check (child_age between 3 and 8),
+  child_age     integer check (child_age between 3 and 10),
   theme         text,                 -- activity / bundle option
   language      text check (language in ('en','hr')),  -- alphabet / bundle option
   occasion      text,

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { PRODUCT_PRICE_CENTS, isProductId, type ProductId } from "@/lib/products";
+import { PRODUCT_PRICE_CENTS, DELIVERY_FEE_CENTS, AGE_MIN, AGE_MAX, isProductId, type ProductId } from "@/lib/products";
 import { sendEmail, buildCustomerEmail, buildOwnerEmail, type OrderEmailData } from "@/lib/email";
 
 export const runtime = "nodejs";
@@ -43,7 +43,7 @@ export async function POST(request: Request) {
   // ── Optional / defaulted (shared across the order) ──
   const product: ProductId = isProductId(body.product) ? body.product : "alphabet";
   const language = body.language === "en" || body.language === "hr" ? body.language : null;
-  const delivery_method =
+  const delivery_method: "boxnow" | "posta" | null =
     body.delivery_method === "boxnow" || body.delivery_method === "posta"
       ? body.delivery_method
       : null;
@@ -62,7 +62,7 @@ export async function POST(request: Request) {
 
   const ageOf = (v: unknown) => {
     const n = Number(v);
-    return Number.isInteger(n) && n >= 3 && n <= 8 ? n : null;
+    return Number.isInteger(n) && n >= AGE_MIN && n <= AGE_MAX ? n : null;
   };
   const normKids = incoming.map((k) => ({
     child_name: str(k.name, 80) || null,
@@ -76,6 +76,8 @@ export async function POST(request: Request) {
   const kids = (named.length ? named : normKids).slice(0, MAX_CHILDREN);
 
   const unit = PRODUCT_PRICE_CENTS[product];
+  // Delivery fee is derived from the chosen method — never trust a client value.
+  const delivery_fee_cents = delivery_method ? DELIVERY_FEE_CENTS[delivery_method] : 0;
   const order_group = crypto.randomUUID();
 
   const shared = {
@@ -115,7 +117,8 @@ export async function POST(request: Request) {
     ...shared,
     delivery_method,
     quantity: kids.length,
-    price_cents: unit * kids.length,
+    delivery_fee_cents,
+    price_cents: unit * kids.length + delivery_fee_cents,
     child_name: kids[0]?.child_name ?? null,
     child_surname: kids[0]?.child_surname ?? null,
     dedication: kids[0]?.dedication ?? null,

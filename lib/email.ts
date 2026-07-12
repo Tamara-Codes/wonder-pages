@@ -6,7 +6,7 @@
  * RESEND_API_KEY is unset, sends are skipped and logged — an order must never
  * fail because email didn't go out. Set these env vars to turn it on:
  *   RESEND_API_KEY      — your Resend key
- *   ORDER_FROM_EMAIL    — verified sender, e.g. "Moja slova <hej@tvoja-domena.hr>"
+ *   ORDER_FROM_EMAIL    — verified sender, e.g. "Maštograd <hej@tvoja-domena.hr>"
  *                         (defaults to Resend's onboarding sender for testing)
  *   ORDER_NOTIFY_EMAIL  — where new-order notifications go (your inbox)
  *
@@ -14,7 +14,7 @@
  * by hand. This email just confirms the order landed.
  */
 
-const FROM = process.env.ORDER_FROM_EMAIL || "Moja slova <onboarding@resend.dev>";
+const FROM = process.env.ORDER_FROM_EMAIL || "Maštograd <onboarding@resend.dev>";
 
 interface SendArgs {
   to: string | string[];
@@ -56,6 +56,7 @@ export interface OrderEmailData {
   city: string;
   postcode: string;
   delivery_method: "boxnow" | "posta" | null;
+  delivery_fee_cents: number;
   quantity: number;
   product: string;
   child_name: string | null;
@@ -65,7 +66,7 @@ export interface OrderEmailData {
   deadline: string | null;
   note: string | null;
   dedication: string | null;
-  price_cents: number; // order total (unit × number of children)
+  price_cents: number; // order total (unit × number of children + delivery fee)
   // one personalized set per child; falls back to the scalar child_* fields
   children?: { name: string; surname: string | null; gender: string | null; dedication: string | null }[];
 }
@@ -100,7 +101,8 @@ function childNames(d: OrderEmailData): string[] {
 
 function summaryRows(d: OrderEmailData): string {
   const product = PRODUCT_NAME[d.product] ?? d.product;
-  const delivery = d.delivery_method ? DELIVERY_NAME[d.delivery_method] ?? d.delivery_method : "—";
+  const deliveryName = d.delivery_method ? DELIVERY_NAME[d.delivery_method] ?? d.delivery_method : "—";
+  const delivery = d.delivery_method ? `${deliveryName} (${priceEur(d.delivery_fee_cents)})` : deliveryName;
   const names = childNames(d);
   const L = { product: "Proizvod", child: "Za dijete", children: "Za djecu", qty: "Broj kompleta", delivery: "Dostava", address: "Adresa", price: "Ukupno" };
   const rows: [string, string][] = [
@@ -123,7 +125,7 @@ function summaryRows(d: OrderEmailData): string {
 export function buildCustomerEmail(d: OrderEmailData): { subject: string; html: string } {
   const names = childNames(d);
   const who = names.length ? names.join(", ") : "vaše dijete";
-  const subject = "Potvrda narudžbe — Moja slova";
+  const subject = "Potvrda narudžbe — Maštograd";
   const forWhom =
     d.product === "bundle"
       ? "oba kompleta (abeceda + brojevi) za"
@@ -140,7 +142,7 @@ export function buildCustomerEmail(d: OrderEmailData): { subject: string; html: 
     <h3 style="margin:24px 0 8px;font-size:15px;">Sažetak narudžbe</h3>
     <table style="border-collapse:collapse;font-size:14px;">${summaryRows(d)}</table>
     <p style="margin-top:24px;">${next}</p>
-    <p style="margin-top:24px;">Srdačno,<br>Tamara · Moja slova</p>
+    <p style="margin-top:24px;">Srdačno,<br>Tamara · Maštograd</p>
   </div>`;
   return { subject, html };
 }

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Gift, Sparkle } from "@/components/icons";
 import { THEMES } from "@/lib/themes";
-import { PRODUCTS, PRODUCT_PRICE_CENTS, priceLabelCents, type ProductId } from "@/lib/products";
+import { PRODUCTS, PRODUCT_PRICE_CENTS, DELIVERY_FEE_CENTS, priceLabelCents, priceLabelCentsExact, type ProductId, type AgeWindow } from "@/lib/products";
 import type { Copy } from "@/lib/landing-copy";
 
 type PreviewPage = { labelKey: string } & (
@@ -15,7 +15,12 @@ type PreviewPage = { labelKey: string } & (
 // different names). These are the per-child personalization fields; which ones
 // are shown depends on the product (alphabet → gender + dedication).
 type Child = { name: string; gender: "girl" | "boy" | ""; posveta: string; theme: string; age: string };
-const blankChild = (): Child => ({ name: "", gender: "", posveta: "", theme: "", age: "5" });
+// Default the age select to the middle of the product's window (e.g. 3–8 → 6).
+const blankChild = (age: AgeWindow | false = false): Child => ({
+  name: "", gender: "", posveta: "", theme: "",
+  age: age ? String(Math.round((age.min + age.max) / 2)) : "",
+});
+const ageOptions = (w: AgeWindow) => Array.from({ length: w.max - w.min + 1 }, (_, i) => w.min + i);
 const MAX_CHILDREN = 10;
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -43,7 +48,7 @@ export function ConfigureWizard({
   const [step, setStep] = useState(0);
 
   // personalization — one set per child (the order can hold several).
-  const [children, setChildren] = useState<Child[]>([blankChild()]);
+  const [children, setChildren] = useState<Child[]>([blankChild(cfg.needs.age)]);
 
   // The keepsake products (alphabet, numbers) add a gender + a free-written
   // dedication (the posveta leaf) + a gendered diploma. The activity book
@@ -76,7 +81,7 @@ export function ConfigureWizard({
     setChildren((cs) => cs.map((c, idx) => (idx === i ? { ...c, ...patch } : c)));
   }
   function addChild() {
-    setChildren((cs) => (cs.length < MAX_CHILDREN ? [...cs, blankChild()] : cs));
+    setChildren((cs) => (cs.length < MAX_CHILDREN ? [...cs, blankChild(cfg.needs.age)] : cs));
   }
   function removeChild(i: number) {
     setChildren((cs) => (cs.length > 1 ? cs.filter((_, idx) => idx !== i) : cs));
@@ -89,7 +94,9 @@ export function ConfigureWizard({
   const canContinue = children.every(childValid);
 
   const first = children[0];
-  const totalCents = PRODUCT_PRICE_CENTS[product] * children.length;
+  const itemsCents = PRODUCT_PRICE_CENTS[product] * children.length;
+  const deliveryCents = deliveryMethod ? DELIVERY_FEE_CENTS[deliveryMethod] : 0;
+  const totalCents = itemsCents + deliveryCents;
 
   const loadPreview = useCallback(async () => {
     setPreviewBusy(true);
@@ -209,7 +216,7 @@ export function ConfigureWizard({
               </span>
               <span className="hidden sm:inline">{label}</span>
             </span>
-            {i < w.steps.length - 1 && <span className="h-0.5 w-5 sm:w-10 rounded bg-border" aria-hidden />}
+            {i < w.steps.length - 1 && <span className="w-5 sm:w-10" aria-hidden />}
           </li>
         ))}
       </ol>
@@ -244,7 +251,7 @@ export function ConfigureWizard({
                     <label className="block">
                       <span className={labelCls}>{w.childAge}</span>
                       <select value={ch.age} onChange={(e) => updateChild(i, { age: e.target.value })} className={inputCls}>
-                        {[3, 4, 5, 6, 7, 8].map((a) => <option key={a} value={a}>{a}</option>)}
+                        {ageOptions(cfg.needs.age).map((a) => <option key={a} value={a}>{a}</option>)}
                       </select>
                     </label>
                   )}
@@ -318,7 +325,7 @@ export function ConfigureWizard({
               className="btn-glow font-display text-lg font-extrabold text-white rounded-full px-8 py-3.5 inline-flex items-center gap-2 disabled:opacity-50"
               style={{ background: "var(--teal)" }}
             >
-              {w.next} <Sparkle size={18} />
+              {w.next}
             </button>
           </div>
         </div>
@@ -336,9 +343,9 @@ export function ConfigureWizard({
           )}
 
           {!previewBusy && preview && (
-            <ul className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            <ul className="flex gap-4 overflow-x-auto snap-x scroll-px-1 pb-3 -mx-6 px-6 [scrollbar-width:thin]">
               {preview.map((p, i) => (
-                <li key={i} className="rounded-2xl bg-card shadow-pop-sm overflow-hidden">
+                <li key={i} className="snap-start shrink-0 w-32 rounded-2xl bg-card shadow-pop-sm overflow-hidden">
                   <div className="bg-white">
                     {p.kind === "img" ? (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -347,7 +354,7 @@ export function ConfigureWizard({
                       <div className="[&>*]:!shadow-none [&>*]:!rounded-none" dangerouslySetInnerHTML={{ __html: p.html }} />
                     )}
                   </div>
-                  <p className="px-3 py-2 font-display font-bold text-xs text-muted">
+                  <p className="px-3 py-2 font-display font-bold text-xs text-muted truncate">
                     {w.pageLabels[p.labelKey] ?? p.labelKey}
                   </p>
                 </li>
@@ -386,10 +393,16 @@ export function ConfigureWizard({
                 </li>
               ))}
             </ul>
-            {children.length > 1 && (
+            {deliveryMethod && (
+              <p className="flex items-center justify-between border-t border-border/60 pt-2.5 mt-1 font-display font-bold text-foreground">
+                <span>{deliveryMethod === "boxnow" ? t.deliveryBoxnow : t.deliveryPosta}</span>
+                <span className="text-teal shrink-0 ml-3">{priceLabelCentsExact(deliveryCents)}</span>
+              </p>
+            )}
+            {(children.length > 1 || deliveryMethod) && (
               <p className="flex items-center justify-between border-t-2 border-border pt-2.5 mt-1 font-display font-extrabold text-foreground">
                 <span>{w.total}</span>
-                <span className="text-teal">{priceLabelCents(totalCents)}</span>
+                <span className="text-teal">{priceLabelCentsExact(totalCents)}</span>
               </p>
             )}
           </div>
@@ -444,7 +457,10 @@ export function ConfigureWizard({
                     className={`text-left rounded-2xl border-2 py-3 px-4 shadow-pop-sm transition ${deliveryMethod === val ? "border-teal text-white" : "border-border bg-card text-foreground"}`}
                     style={deliveryMethod === val ? { background: "var(--teal)" } : undefined}
                   >
-                    <span className="font-display font-bold block">{lbl}</span>
+                    <span className="flex items-baseline justify-between gap-2">
+                      <span className="font-display font-bold">{lbl}</span>
+                      <span className="font-display font-extrabold shrink-0">{priceLabelCentsExact(DELIVERY_FEE_CENTS[val])}</span>
+                    </span>
                     <span className={`text-xs font-semibold ${deliveryMethod === val ? "text-white/85" : "text-muted"}`}>{desc}</span>
                   </button>
                 ))}
