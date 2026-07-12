@@ -25,6 +25,7 @@ const SUBJECTS = {
   airplane: "a cute cartoon airplane with a happy smiling face",
   banana: "a cute cartoon banana with a happy smiling face",
   cupcake: "a cute cartoon cupcake with a happy face",
+  tulip: "a single cute cartoon flower — one simple flower with a round centre and a ring of rounded petals, on a straight stem with two leaves (a clear, generic flower)",
   shoe: "a single cute cartoon shoe — a classic elegant lady's shoe with a small heel (a court / Mary-Jane style shoe), NOT a sneaker, NOT a trainer, NOT a boot",
   socks: "a pair of cute cartoon socks",
   jug: "a cute cartoon clay jug pot with a happy face",
@@ -56,14 +57,17 @@ const SUBJECTS = {
   train: "a cute cartoon train with a happy face",
   rabbit: "a cute cartoon rabbit with a friendly face",
   frog: "a cute cartoon frog with a friendly face",
+  camel: "a cute cartoon camel with a friendly face and two humps",
+  indian: "a cute cartoon Native American child ('Indijanac') with a friendly smiling face, wearing a feather headdress, standing — a single whole character",
+  barn: "a simple farm scene grouped as ONE tidy centered composition: a cute cartoon barn building with a pitched roof and large double doors in the middle, a friendly cartoon cow standing on one side of it and a little cartoon chicken on the other side; the barn has no face, the animals have friendly faces",
 };
 
 const PROMPT = (subject) =>
-  `An OUTLINE-ONLY black and white coloring page for young children: ${subject}. ` +
-  `The picture must look like it was DRAWN BY HAND with a crayon or a soft pencil on paper — a loose, hand-sketched children's illustration. The strokes must look hand-made and a little rough: slightly grainy, uneven and wobbly lines with natural imperfections and visible sketchiness, clearly NOT smooth digital vector art, NOT crisp geometric curves, NOT a clean clipart look. ` +
-  `Black hand-drawn outlines, closed enough that a child can colour inside them; pure white background, the interior left BLANK and UNCOLOURED (no shading or fill inside the shapes). ` +
-  `No shading, no hatching, no grey, no colour, no fill; every interior area left plain white. ` +
-  `Show ONLY the single subject, centered — absolutely NO background scenery: no clouds, no sky, no ground, no grass, no stars, nothing behind it. ` +
+  `A clean OUTLINE-ONLY black-and-white coloring page for young children: ${subject}. ` +
+  `Bold, smooth, even black outlines of a UNIFORM thickness — crisp rounded cartoon line art like a printed coloring book or simple clipart, the kind of clean outline a child can colour inside. ` +
+  `Absolutely NO shading, NO hatching, NO cross-hatching, NO fur strokes, NO wood grain, NO texture, NO grain, NO grey tones, NO colour, NO fill, NO gradients, NO pencil sketchiness — every interior area left completely plain blank white. ` +
+  `The lines must be smooth and confident, NOT grainy, NOT wobbly, NOT rough, NOT sketchy; use as few interior detail lines as possible. ` +
+  `Show ONLY the single subject, centered — absolutely NO background scenery: no clouds, no sky, no ground, no grass, no stars, nothing behind it. Pure white background. ` +
   `No text, no letters, no border, no frame.`;
 
 function apiKey() {
@@ -76,6 +80,26 @@ function apiKey() {
 
 const MODEL = process.env.GEMINI_IMAGE_MODEL ?? "gemini-2.5-flash-image";
 const ai = new GoogleGenAI({ apiKey: apiKey(), httpOptions: { timeout: 120000 } });
+
+/**
+ * Snap the near-white background to PURE white. The model returns art on a
+ * slightly off-white wash (luma ~247–251), not transparency — so `flatten`
+ * is a no-op and `trim` only clears the outer border, leaving a visible grey
+ * panel behind the subject on the page. Whitening any pixel at luma ≥ 245
+ * removes that panel while leaving the black outlines and any genuine mid-grey
+ * shading (< 245) untouched.
+ */
+async function whitenBackground(buffer) {
+  const { data, info } = await sharp(buffer).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+  for (let i = 0; i < data.length; i += info.channels) {
+    if ((data[i] + data[i + 1] + data[i + 2]) / 3 >= 245) {
+      data[i] = 255;
+      data[i + 1] = 255;
+      data[i + 2] = 255;
+    }
+  }
+  return sharp(data, { raw: { width: info.width, height: info.height, channels: info.channels } }).png().toBuffer();
+}
 
 /** Generate, trim whitespace, pad slightly, and save one key. */
 async function generateOne(key) {
@@ -96,10 +120,11 @@ async function generateOne(key) {
   const trimmed = await sharp(t1).trim({ threshold: 15 }).toBuffer();
   const { width, height } = await sharp(trimmed).metadata();
   const pad = Math.round(Math.max(width, height) * 0.04);
-  const out = await sharp(trimmed)
+  const padded = await sharp(trimmed)
     .extend({ top: pad, bottom: pad, left: pad, right: pad, background: { r: 255, g: 255, b: 255, alpha: 1 } })
     .png()
     .toBuffer();
+  const out = await whitenBackground(padded);
 
   writeFileSync(join(ART_DIR, `${key}.png`), out);
   console.log(`✓ ${key}.png  (${width}×${height} +${pad}px)`);
