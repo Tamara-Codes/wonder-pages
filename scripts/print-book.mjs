@@ -10,7 +10,8 @@
  *   3. node scripts/print-book.mjs --pdf           → print-out/abc/book.pdf
  *
  * Flags (all optional):
- *   --book=abc|numbers|numbers-v2|numbers-*-test   which booklet (default abc)
+ *   --book=abc|numbers|numbers-v2|maze|sudoku|numbers-*-test   which booklet (default abc)
+ *   --age=7              child's age (maze 4–10, sudoku 5–10 → difficulty)
  *   --name=Ema           child's name (default Ema)
  *   --possessive=Emina   possessive form for the cover headline
  *   --surname=Horvat     surname (shown on the diploma)
@@ -48,7 +49,7 @@ const SPAWN_PORT = 3777; // off the usual 3000 so a running `next dev` is untouc
 // Query params the /print route understands.
 const qp = new URLSearchParams();
 if (book !== "abc") qp.set("book", book);
-for (const k of ["name", "possessive", "surname", "gender", "posveta", "lang"]) {
+for (const k of ["name", "possessive", "surname", "gender", "posveta", "lang", "age"]) {
   if (args[k] && args[k] !== "true") qp.set(k, args[k]);
 }
 
