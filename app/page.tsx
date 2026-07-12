@@ -33,6 +33,44 @@ const SHOWCASE_IMAGES = [
   "/showcase/photo-pages.jpg",  // printed cover + alphabet coloring pages
 ];
 
+// Structured data for search + answer engines: the three buyable products and
+// the landing FAQ, built from the same copy the page renders.
+const SITE_URL = "https://www.mastograd.eu";
+
+const PRODUCTS_JSONLD = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  itemListElement: (["alphabet", "numbers", "bundle"] as const).map((id, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    item: {
+      "@type": "Product",
+      name: COPY.products.cards[id].name,
+      description: COPY.products.cards[id].tagline,
+      image: `${SITE_URL}/og.jpg`,
+      brand: { "@type": "Brand", name: "Maštograd" },
+      offers: {
+        "@type": "Offer",
+        price: (PRODUCT_PRICE_CENTS[id] / 100).toFixed(2),
+        priceCurrency: "EUR",
+        availability: "https://schema.org/InStock",
+        areaServed: { "@type": "Country", name: "Hrvatska" },
+        url: `${SITE_URL}/products/${id}`,
+      },
+    },
+  })),
+};
+
+const FAQ_JSONLD = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: ALPHABET_COPY.faq.items.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  })),
+};
+
 export default function Home() {
   const c = ALPHABET_COPY;
   const shop = COPY;
@@ -41,6 +79,14 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-full">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(PRODUCTS_JSONLD) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_JSONLD) }}
+      />
       <ShopHeader />
 
       <main className="flex-1">

@@ -38,10 +38,42 @@ const sriracha = Sriracha({
   weight: ["400"],
 });
 
+const SITE_URL = "https://www.mastograd.eu";
+const SITE_TITLE = "Maštograd — personalizirana abeceda i brojevi za djecu";
+const SITE_DESCRIPTION =
+  "Personalizirana prva abeceda i brojevi za djecu od 3 do 6 godina: za svako slovo i broj listić za bojanje, sličicu i crte za pisanje, ručno izrađeno u Hrvatskoj i zapakirano kao poklon s imenom djeteta.";
+
 export const metadata: Metadata = {
-  title: "Maštograd — personalizirana abeceda za djecu",
-  description:
-    "Personalizirana prva abeceda za djecu od 3 do 6 godina: za svako slovo listić za bojanje, sličicu i crte za pisanje, u poklon-vrećici s imenom djeteta.",
+  metadataBase: new URL(SITE_URL),
+  title: { default: SITE_TITLE, template: "%s · Maštograd" },
+  description: SITE_DESCRIPTION,
+  openGraph: {
+    type: "website",
+    locale: "hr_HR",
+    url: "/",
+    siteName: "Maštograd",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: [{ url: "/og.jpg", width: 1200, height: 630, alt: "Maštograd — personalizirani listići za bojanje s imenom djeteta" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: ["/og.jpg"],
+  },
+};
+
+// Site-wide structured data: who we are. Product + FAQ schema lives on the
+// landing page (app/page.tsx) where that content actually renders.
+const ORGANIZATION_JSONLD = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Maštograd",
+  url: SITE_URL,
+  logo: `${SITE_URL}/logo.png`,
+  description: SITE_DESCRIPTION,
+  areaServed: { "@type": "Country", name: "Hrvatska" },
 };
 
 export default function RootLayout({
@@ -55,6 +87,10 @@ export default function RootLayout({
       className={`${baloo.variable} ${nunito.variable} ${fredoka.variable} ${caveat.variable} ${sriracha.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(ORGANIZATION_JSONLD) }}
+        />
         {children}
         <Analytics />
       </body>
