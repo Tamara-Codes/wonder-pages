@@ -4,15 +4,21 @@
  * internal tool for fulfilling orders by hand, NOT part of the shop.
  *
  * Defaults to the Croatian alphabet edition. Switch booklet with `book=numbers`
- * (the "Moji prvi brojevi" 0–9 set). Personalize via query params:
+ * (the current "Moji prvi brojevi" 0–9 set), `book=numbers-test` (a single
+ * prototype page), or `book=numbers-v2` (the full 0–9 redesign — word-left +
+ * Gemini numeral-character art, see buildNumbersV2PrintLeaves in
+ * lib/print-build.ts). Personalize via query params:
  *   /print?name=Ema&possessive=Emina&surname=Horvat&gender=girl&lang=hr&posveta=Sretan%20rođendan!
  *   /print?book=numbers&name=Ema&possessive=Emini&gender=girl
+ *   /print?book=numbers-test&name=Ema   (also numbers-play-test, numbers-tasks-test, numbers-kite-test, numbers-zoo-test)
+ *   /print?book=numbers-tasks-test&name=Ema
+ *   /print?book=numbers-v2&name=Ema&possessive=Emini&gender=girl
  *
  * The leaves are pre-built HTML (lib/print-build), so this server component just
  * injects the print stylesheet and drops them in. Fonts come from the root
  * layout's next/font variables (--font-display etc.).
  */
-import { buildPrintLeaves, buildNumbersPrintLeaves, PRINT_CSS, type PrintOpts } from "@/lib/print-build";
+import { buildPrintLeaves, buildNumbersPrintLeaves, buildNumberIntroTestLeaves, buildNumberPlayTestLeaves, buildNumberTasksTestLeaves, buildKiteTestLeaves, buildZooTestLeaves, buildNumbersV2PrintLeaves, PRINT_CSS, type PrintOpts } from "@/lib/print-build";
 import type { LanguageId } from "@/lib/alphabet";
 
 export const runtime = "nodejs";
@@ -41,7 +47,16 @@ export default async function PrintPage({
     possessive: one(sp.possessive),
   };
 
-  const leaves = one(sp.book) === "numbers" ? buildNumbersPrintLeaves(opts) : buildPrintLeaves(opts);
+  const book = one(sp.book);
+  const leaves =
+    book === "numbers" ? buildNumbersPrintLeaves(opts)
+    : book === "numbers-test" ? buildNumberIntroTestLeaves(opts.childName)
+    : book === "numbers-play-test" ? buildNumberPlayTestLeaves(opts.childName)
+    : book === "numbers-tasks-test" ? buildNumberTasksTestLeaves(opts.childName)
+    : book === "numbers-kite-test" ? buildKiteTestLeaves(opts.childName)
+    : book === "numbers-zoo-test" ? buildZooTestLeaves(opts.childName)
+    : book === "numbers-v2" ? buildNumbersV2PrintLeaves(opts)
+    : buildPrintLeaves(opts);
 
   return (
     <>

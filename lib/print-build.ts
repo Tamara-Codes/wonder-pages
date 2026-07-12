@@ -14,6 +14,7 @@
  */
 import { ALPHABETS, type LanguageId } from "./alphabet";
 import { NUMBERS, type NumberEntry } from "./numbers";
+import { NUMBERS_V2 } from "./numbers-v2";
 import { iconLineArt } from "./icons-line";
 import { existsSync } from "fs";
 import { join } from "path";
@@ -55,6 +56,15 @@ function escapeHtml(s: string): string {
   );
 }
 
+/**
+ * Tag a leaf with a semantic name (cover, posveta, letter-A, …). The per-page
+ * export script (scripts/print-book.mjs) reads `data-leaf` to name each PNG, so
+ * a broken page is easy to point at ("fix letter-Ž"). Harmless on the route.
+ */
+function tagLeaf(html: string, label: string): string {
+  return html.replace('<section class="leaf"', `<section data-leaf="${label}" class="leaf"`);
+}
+
 /** Commissioned colour-in art for a key, if drawn; else null (use line art). */
 function artImageSrc(key: string): string | null {
   return existsSync(join(ART_DIR, `${key}.png`)) ? `/icons-art/${key}.png` : null;
@@ -71,7 +81,7 @@ function handwriting(glyph: string): string {
   const count = glyph.length > 1 ? 4 : 6; // digraphs (Dž, Lj, Nj) get fewer, wider
   const slot = W / count;
   const ghosts = Array.from({ length: count }, (_, i) =>
-    `<text x="${(slot * (i + 0.5)).toFixed(1)}" y="16" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:${INK};fill-opacity:.08">${escapeHtml(glyph)}</text>`,
+    `<text x="${(slot * (i + 0.5)).toFixed(1)}" y="16" text-anchor="middle" style="font-family:var(--font-baloo),'Baloo 2',sans-serif;font-weight:700;font-size:16px;fill:${INK};fill-opacity:.08">${escapeHtml(glyph)}</text>`,
   ).join("");
   const line = (y: number) =>
     `<line x1="1" y1="${y}" x2="${W - 1}" y2="${y}" stroke="${INK}" stroke-width="0.7" stroke-opacity=".8"/>`;
@@ -181,7 +191,7 @@ function oneBlock(letter: string, p: BlockShade, S: number, d: number): string {
   const front = `<rect x="0" y="${d}" width="${S}" height="${S}" rx="9" fill="${p.face}"/>`;
   const m = 13; // white panel inset
   const panel = `<rect x="${m}" y="${d + m}" width="${S - 2 * m}" height="${S - 2 * m}" rx="7" fill="#fffdf7"/>`;
-  const glyph = `<text x="${S / 2}" y="${d + S / 2}" text-anchor="middle" dominant-baseline="central" dy="0.04em" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:800;font-size:44px;fill:${p.side}">${escapeHtml(letter)}</text>`;
+  const glyph = `<text x="${S / 2}" y="${d + S / 2}" text-anchor="middle" dominant-baseline="central" dy="0.04em" style="font-family:var(--font-baloo),'Baloo 2',sans-serif;font-weight:800;font-size:44px;fill:${p.side}">${escapeHtml(letter)}</text>`;
   return top + side + front + panel + glyph;
 }
 
@@ -303,7 +313,7 @@ function tile(bg: string, icon: string): string {
 
 function popHeading(text: string, color: string, opts: { size?: number; spacing?: number; upper?: boolean } = {}): string {
   const upper = opts.upper ? "text-transform:uppercase;" : "";
-  return `<div style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:800;font-size:${opts.size ?? 7}mm;letter-spacing:${opts.spacing ?? 0}mm;${upper}color:${color};line-height:1.1;">${escapeHtml(text)}</div>`;
+  return `<div style="font-family:var(--font-baloo),'Baloo 2',sans-serif;font-weight:800;font-size:${opts.size ?? 7}mm;letter-spacing:${opts.spacing ?? 0}mm;${upper}color:${color};line-height:1.1;">${escapeHtml(text)}</div>`;
 }
 
 function dot(color: string): string {
@@ -327,7 +337,7 @@ function hollowWordSvg(text: string, accent: string): string {
   const fs = Math.min(MAX, Math.round(TARGET / (0.6 * len)));
   const fit = len >= 7 ? ` textLength="${TARGET}" lengthAdjust="spacingAndGlyphs"` : "";
   return `<svg viewBox="0 0 400 130" style="width:100%" aria-hidden="true">
-    <text x="200" y="92" text-anchor="middle"${fit} style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:800;font-size:${fs}px;fill:#fff;stroke:${accent};stroke-width:5;stroke-linejoin:round;paint-order:stroke;">${escapeHtml(text)}</text>
+    <text x="200" y="92" text-anchor="middle"${fit} style="font-family:var(--font-baloo),'Baloo 2',sans-serif;font-weight:800;font-size:${fs}px;fill:#fff;stroke:${accent};stroke-width:5;stroke-linejoin:round;paint-order:stroke;">${escapeHtml(text)}</text>
   </svg>`;
 }
 
@@ -354,7 +364,7 @@ function wordTraceSvg(text: string, accent: string): string {
   const fs = Math.min(38, wordFontSize(text.length) * 0.5);
   const line = (y: number) =>
     `<line x1="6" y1="${y}" x2="${W - 6}" y2="${y}" stroke="${accent}" stroke-width="2" stroke-opacity=".7"/>`;
-  const ghost = `<text x="${W / 2}" y="46" text-anchor="middle" style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:700;font-size:${fs}px;fill:${accent};fill-opacity:.18">${escapeHtml(text)}</text>`;
+  const ghost = `<text x="${W / 2}" y="46" text-anchor="middle" style="font-family:var(--font-baloo),'Baloo 2',sans-serif;font-weight:700;font-size:${fs}px;fill:${accent};fill-opacity:.18">${escapeHtml(text)}</text>`;
   return `<svg viewBox="0 0 400 110" style="width:96%" aria-hidden="true">${line(48)}${ghost}${line(96)}</svg>`;
 }
 
@@ -409,7 +419,7 @@ function diplomaLeaf(
   // The cheer ("Bravo!") gets its own line below the message, in the accent
   // colour, so it lands as a little celebration rather than trailing the text.
   const cheerLine = cheer
-    ? `<div style="font-family:var(--font-display),'Baloo 2',sans-serif;font-weight:800;font-size:8mm;color:${p.head};">${escapeHtml(cheer)}</div>`
+    ? `<div style="font-family:var(--font-baloo),'Baloo 2',sans-serif;font-weight:800;font-size:8mm;color:${p.head};">${escapeHtml(cheer)}</div>`
     : "";
   return popCard(
     `${rosette(p.r1, p.r2)}
@@ -477,16 +487,16 @@ export function buildPrintLeaves(opts: PrintOpts = {}): string[] {
   const footer = `${s.subtitle} · ${name.toUpperCase()}`;
   const leaves: string[] = [];
   leaves.push(
-    coverLeaf(name, opts.possessive || "", s.subtitle, s.blockWord, s.prvaWord, s.madeWith),
+    tagLeaf(coverLeaf(name, opts.possessive || "", s.subtitle, s.blockWord, s.prvaWord, s.madeWith), "cover"),
   );
-  leaves.push(posvetaLeaf(opts.posveta || s.posvetaFallback(name, opts.gender)));
+  leaves.push(tagLeaf(posvetaLeaf(opts.posveta || s.posvetaFallback(name, opts.gender)), "posveta"));
   // Page numbers count the LETTERS (A = 1), not the keepsake leaves.
   alpha.letters.forEach((e, i) => {
-    leaves.push(letterLeaf(e.letter, e.word, e.iconKey, alpha.connective, footer, i + 1));
+    leaves.push(tagLeaf(letterLeaf(e.letter, e.word, e.iconKey, alpha.connective, footer, i + 1), `letter-${e.letter}`));
   });
-  leaves.push(nameLeaf(name, s.nameLabel, opts.gender));
+  leaves.push(tagLeaf(nameLeaf(name, s.nameLabel, opts.gender), "name"));
   leaves.push(
-    diplomaLeaf(fullName, s.diplomaTitle, s.diplomaIntro, s.diplomaBody(opts.gender), opts.gender, s.diplomaCheer),
+    tagLeaf(diplomaLeaf(fullName, s.diplomaTitle, s.diplomaIntro, s.diplomaBody(opts.gender), opts.gender, s.diplomaCheer), "diploma"),
   );
   return leaves;
 }
@@ -521,14 +531,401 @@ export function buildNumbersPrintLeaves(opts: PrintOpts = {}): string[] {
   // Keepsake arc: cover → posveta → 0–9 → my-name → diploma.
   const footer = `${s.subtitle} · ${name.toUpperCase()}`;
   const leaves: string[] = [];
-  leaves.push(coverLeaf(name, opts.possessive || "", s.subtitle, s.blockWord, s.prvaWord, s.madeWith));
-  leaves.push(posvetaLeaf(opts.posveta || s.posvetaFallback(name, opts.gender)));
+  leaves.push(tagLeaf(coverLeaf(name, opts.possessive || "", s.subtitle, s.blockWord, s.prvaWord, s.madeWith), "cover"));
+  leaves.push(tagLeaf(posvetaLeaf(opts.posveta || s.posvetaFallback(name, opts.gender)), "posveta"));
   // Page numbers count the NUMBERS (0 = 1), not the keepsake leaves.
   NUMBERS.forEach((entry, i) => {
-    leaves.push(numberLeaf(entry, footer, i + 1));
+    leaves.push(tagLeaf(numberLeaf(entry, footer, i + 1), `number-${entry.digit}`));
   });
-  leaves.push(nameLeaf(name, s.nameLabel, opts.gender));
-  leaves.push(diplomaLeaf(fullName, s.diplomaTitle, s.diplomaIntro, s.diplomaBody(opts.gender), opts.gender, s.diplomaCheer));
+  leaves.push(tagLeaf(nameLeaf(name, s.nameLabel, opts.gender), "name"));
+  leaves.push(tagLeaf(diplomaLeaf(fullName, s.diplomaTitle, s.diplomaIntro, s.diplomaBody(opts.gender), opts.gender, s.diplomaCheer), "diploma"));
+  return leaves;
+}
+
+// ── Numbers v2 prototype — simple "1–10" leaf, mirrors letterLeaf ─
+// One-off test leaf for the richer "Moji prvi brojevi" redesign (2026-07-11):
+// numbers 1–10, laid out EXACTLY like an alphabet leaf (word up top, one big
+// colour-in picture, two trace/write lines at the bottom) — the "picture" is
+// the numeral itself, a friendly character to colour. The word sits LEFT
+// (not centred like the alphabet leaf) and the picture rides high, pulled up
+// toward the word rather than centred in its box.
+//
+// The numeral character is a bespoke Gemini colour-in drawing at
+// public/icons-art/num<digit>-face.png (scripts/gen-numbers-v2.mjs), same
+// commissioned-art pattern as the alphabet icons. Falls back to a hand-drawn
+// SVG face (text glyph + eyes) for any digit not yet generated.
+// Does NOT touch lib/numbers.ts or buildNumbersPrintLeaves above — the
+// simpler 0–9 product still in use.
+
+/** Eye/mouth placement tuned per digit's glyph shape (viewBox 0 0 140 170), used only by the SVG fallback. */
+interface NumberFace { cx1: number; cx2: number; cy: number; r: number }
+const NUMBER_FACES: Record<string, NumberFace> = {
+  "1": { cx1: 62, cx2: 80, cy: 56, r: 6.5 },
+};
+
+/** Hand-drawn fallback: the numeral glyph + eyes/smile, for a digit with no commissioned art yet. */
+function numberFaceFallback(digit: string): string {
+  const f = NUMBER_FACES[digit] ?? { cx1: 52, cx2: 88, cy: 62, r: 7 };
+  const mouthY = f.cy + 20;
+  return `<svg viewBox="0 0 140 170" aria-hidden="true">
+    <text x="70" y="150" text-anchor="middle" style="font-family:var(--font-baloo),'Baloo 2',sans-serif;font-weight:800;font-size:170px;fill:#fff;stroke:${INK};stroke-width:6;paint-order:stroke fill;">${digit}</text>
+    <circle cx="${f.cx1}" cy="${f.cy}" r="${f.r}" fill="${INK}"/>
+    <circle cx="${f.cx2}" cy="${f.cy}" r="${f.r}" fill="${INK}"/>
+    <path d="M${f.cx1} ${mouthY} Q70 ${mouthY + 9} ${f.cx2} ${mouthY}" fill="none" stroke="${INK}" stroke-width="4" stroke-linecap="round"/>
+  </svg>`;
+}
+
+/** The numeral picture: commissioned Gemini art if drawn, else the SVG fallback face. */
+function numberFace(digit: string): string {
+  const src = artImageSrc(`num${digit}-face`);
+  return src ? `<img src="${src}" alt="" />` : numberFaceFallback(digit);
+}
+
+/** One number leaf, laid out like letterLeaf: word (left), the big numeral picture, then trace lines. */
+function numberSimpleLeaf(digit: string, word: string, footer: string, pageNo: number): string {
+  return `<section class="leaf"><div class="lp">
+    <div class="lp-head lp-head--left">
+      <span class="lp-word">${escapeHtml(word.toUpperCase())}</span>
+    </div>
+    <div class="lp-pic">${numberFace(digit)}</div>
+    ${handwriting(digit)}
+    <div class="lp-foot">${escapeHtml(footer)}</div>
+  </div><div class="lp-pageno">${pageNo}</div></section>`;
+}
+
+/** Single-leaf test build: just the "Broj 1" prototype page. */
+export function buildNumberIntroTestLeaves(childName = "Ema"): string[] {
+  const footer = `moji prvi brojevi · ${childName.toUpperCase()}`;
+  return [tagLeaf(numberSimpleLeaf("1", "Jedan", footer, 1), "number-1-test")];
+}
+
+// ── Numbers v2 prototype — "Igram se s brojem" (page 2 per digit) ──
+// One-off test leaf for the SECOND page per number (2026-07-11): two small
+// activities, pure code/layout (no Gemini art) — recognition (circle the
+// digit among decoys) + counting (count a picture, write the number). Reuses
+// the shared icon vocabulary via iconLineArt, same as the alphabet leaf.
+
+/** A row of digit glyphs (some matching the target, some decoys) to circle by hand. */
+function digitRecognitionRow(digits: string[]): string {
+  const cells = digits.map((d) => `<span class="npg-digit">${escapeHtml(d)}</span>`).join("");
+  return `<div class="npg-digits">${cells}</div>`;
+}
+
+/** `count` copies of one icon in a simple row, to count — then a blank box to write the answer. */
+function countAndWriteRow(iconKey: string, count: number): string {
+  const one = iconLineArt(iconKey, INK).replace("<svg", "<svg ");
+  const cells = Array.from({ length: count }, () => `<div class="npg-count-cell">${one}</div>`).join("");
+  return `<div class="npg-count-row">${cells}</div><div class="npg-answer-box"></div>`;
+}
+
+/** One "Igram se s brojem" test leaf for digit 1: recognition + count-and-write. */
+function numberPlayTestLeaf(childName: string): string {
+  const footer = `moji prvi brojevi · ${childName.toUpperCase()}`;
+  return `<section class="leaf"><div class="npg">
+    <div class="npg-eyebrow">BROJ 1 · IGRAM SE</div>
+    <div class="npg-activity">
+      <div class="npg-instruction">Zaokruži broj 1.</div>
+      ${digitRecognitionRow(["7", "1", "4", "1", "0", "1"])}
+    </div>
+    <div class="npg-activity">
+      <div class="npg-instruction">Prebroji i napiši.</div>
+      ${countAndWriteRow("balloon", 1)}
+    </div>
+    <div class="lp-foot">${escapeHtml(footer)}</div>
+  </div><div class="lp-pageno">1b</div></section>`;
+}
+
+/** Single-leaf test build: just the "Igram se s brojem 1" prototype page. */
+export function buildNumberPlayTestLeaves(childName = "Ema"): string[] {
+  return [tagLeaf(numberPlayTestLeaf(childName), "number-1-play-test")];
+}
+
+// ── Numbers v2 prototype — "dice + cube stacks" tasks leaf ────────
+// One-off test leaf (2026-07-12) with two tasks, pure code/vector (no Gemini
+// art): matching (dice faces 1–6 in mixed order up top, numerals 1–6 below —
+// draw a line between each pair) + counting (four stacks of building cubes,
+// count each and write the total in the box underneath).
+
+/** Standard pip positions per die value, on a 0–100 face. */
+const DIE_PIPS: Record<number, Array<[number, number]>> = {
+  1: [[50, 50]],
+  2: [[31, 31], [69, 69]],
+  3: [[31, 31], [50, 50], [69, 69]],
+  4: [[31, 31], [69, 31], [31, 69], [69, 69]],
+  5: [[31, 31], [69, 31], [50, 50], [31, 69], [69, 69]],
+  6: [[31, 31], [69, 31], [31, 50], [69, 50], [31, 69], [69, 69]],
+};
+
+/** One die face: rounded light-blue square + dark-blue pips (a colour page). */
+function dieFace(value: number): string {
+  const pips = DIE_PIPS[value]
+    .map(([x, y]) => `<circle cx="${x}" cy="${y}" r="8.5" fill="${BLUE_D}"/>`)
+    .join("");
+  return `<svg viewBox="0 0 100 100" aria-hidden="true">
+    <rect x="3" y="3" width="94" height="94" rx="18" fill="#e8f3ff" stroke="${BLUE_D}" stroke-width="5"/>
+    ${pips}
+  </svg>`;
+}
+
+/** Face tints for one cube stack: lightest top, darkest side, strong outline. */
+interface CubeShade { top: string; front: string; side: string; stroke: string }
+
+/**
+ * A stack of building cubes drawn in simple isometric art, tinted in the given
+ * colour (lightest top, darkest side) so the 3D reads — this is a colour page.
+ * `rows` lists the cubes per row TOP to BOTTOM; each row is centred over the
+ * one below. Painted bottom-up and left-to-right so nearer faces cover the
+ * ones behind.
+ */
+function cubeStackSvg(rows: number[], shade: CubeShade): string {
+  const S = 20; // front-face size (viewBox units)
+  const D = 8; // isometric depth
+  const SW = 2; // stroke width
+  const MM = 0.32; // mm per viewBox unit → a ~6.4 mm cube
+  const n = rows.length;
+  const maxCols = Math.max(...rows);
+  const W = maxCols * S + D + SW;
+  const H = n * S + D + SW;
+  const cubes: string[] = [];
+  for (let rb = 0; rb < n; rb++) {
+    const cols = rows[n - 1 - rb];
+    const x0 = SW / 2 + ((maxCols - cols) * S) / 2;
+    const yB = H - SW / 2 - rb * S;
+    const yT = yB - S;
+    for (let c = 0; c < cols; c++) {
+      const x = x0 + c * S;
+      cubes.push(
+        `<polygon points="${x},${yT} ${x + D},${yT - D} ${x + S + D},${yT - D} ${x + S},${yT}" fill="${shade.top}"/>`,
+        `<polygon points="${x + S},${yB} ${x + S + D},${yB - D} ${x + S + D},${yT - D} ${x + S},${yT}" fill="${shade.side}"/>`,
+        `<rect x="${x}" y="${yT}" width="${S}" height="${S}" fill="${shade.front}"/>`,
+      );
+    }
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" width="${(W * MM).toFixed(1)}mm" height="${(H * MM).toFixed(1)}mm" stroke="${shade.stroke}" stroke-width="${SW}" stroke-linejoin="round" aria-hidden="true">${cubes.join("")}</svg>`;
+}
+
+// Cubes per row (top to bottom) + tint, one colour per stack: a blue 2×2
+// block of 4, a yellow tower of 6, a green pyramid of 10 (2/3/5) and a red
+// mound of 8 (1/1/2/4).
+const CUBE_STACKS: Array<{ rows: number[]; shade: CubeShade }> = [
+  { rows: [2, 2], shade: { top: "#f5faff", front: "#e8f3ff", side: "#cde4fa", stroke: BLUE_D } },
+  { rows: [1, 1, 1, 1, 1, 1], shade: { top: "#fff9e6", front: "#ffefc2", side: "#ffdf8f", stroke: "#e0a91f" } },
+  { rows: [2, 3, 5], shade: { top: "#eefcf8", front: "#d9f6ee", side: "#b6ecdd", stroke: TEAL_D } },
+  { rows: [1, 1, 2, 4], shade: { top: "#fff0f0", front: "#ffdede", side: "#ffc2c2", stroke: "#d64545" } },
+];
+
+/** The two-task leaf: dice↔number matching + count-the-cubes. */
+function numberTasksTestLeaf(childName: string): string {
+  const footer = `moji prvi brojevi · ${childName.toUpperCase()}`;
+  // Mixed so no die sits above its own number (a straight-down line is no fun).
+  const diceOrder = [3, 6, 1, 5, 2, 4];
+  const dice = diceOrder
+    .map((v) => `<div class="npg-die">${dieFace(v)}</div>`)
+    .join("");
+  const nums = [1, 2, 3, 4, 5, 6]
+    .map((n) => `<span class="npg-num">${n}</span>`)
+    .join("");
+  const stacks = CUBE_STACKS
+    .map(({ rows, shade }) => `<div class="npg-stack">${cubeStackSvg(rows, shade)}<div class="npg-stack-box"></div></div>`)
+    .join("");
+  return `<section class="leaf"><div class="npg">
+    <div class="npg-activity npg-activity--tight">
+      <div class="npg-instruction">Spoji kockicu s brojem.</div>
+      <div class="npg-pair-row">${dice}</div>
+      <div class="npg-pair-row npg-pair-row--nums">${nums}</div>
+    </div>
+    <div class="npg-activity npg-activity--tight">
+      <div class="npg-instruction">Prebroji kocke i napiši broj.</div>
+      <div class="npg-stacks">${stacks}</div>
+    </div>
+    <div class="lp-foot">${escapeHtml(footer)}</div>
+  </div></section>`;
+}
+
+/** Single-leaf test build: just the dice + cube-stacks tasks prototype page. */
+export function buildNumberTasksTestLeaves(childName = "Ema"): string[] {
+  return [tagLeaf(numberTasksTestLeaf(childName), "numbers-tasks-test")];
+}
+
+// ── Numbers v2 — "missing numbers" shirts leaf ────────────────────
+// The one leaf of the booklet that is IN COLOUR: ten shirts pegged to two
+// washing lines, numbered 1–10 in reading order, but 3, 5, 6, 8 and 9 are
+// blank — the child writes them in. The whole scene is a commissioned Gemini
+// drawing at public/icons-art/num-shirts-<gender>.png (scripts/
+// gen-number-shirts.mjs): blue shirts for a boy, pink for a girl.
+
+/** The shirts leaf, or null if the art for that gender isn't generated yet. */
+function missingNumbersLeaf(gender: "boy" | "girl", footer: string, pageNo: number): string | null {
+  const src = artImageSrc(`num-shirts-${gender}`);
+  if (!src) return null;
+  return `<section class="leaf"><div class="lp">
+    <div class="npg-instruction">Napiši brojeve koji nedostaju!</div>
+    <div class="lp-pic lp-pic--wide"><img src="${src}" alt="" /></div>
+    <div class="lp-foot">${escapeHtml(footer)}</div>
+  </div><div class="lp-pageno">${pageNo}</div></section>`;
+}
+
+// ── Numbers v2 — connect-the-dots kite leaf ───────────────────────
+// The child joins dots 1–10 and a diamond kite appears in the sky (2026-07-12,
+// went FULL COLOUR same day — Tamara wanted a storybook scene like her
+// reference, not line art). Split follows the shirts-page precedent: the whole
+// painted scene (sky, meadow, frog in a red jacket with the scarf streaming in
+// the wind, the THIN kite string rising from its spool and ending in open sky
+// with little ribbon bows) is ONE Gemini image at public/icons-art/
+// kite-frog.png (scripts/gen-kite-frog.mjs); the code overlays only what must
+// be exact — small dots, thin plain numbers, the kite's smiley face and a
+// dashed close-the-shape hint. KITE_CORNERS positions the diamond so its
+// BOTTOM corner sits where the painted string ends — re-tune by eye whenever
+// the scene art is regenerated.
+
+type XY = [number, number];
+
+/** Diamond corners of the dot kite in the scene viewBox (0 0 116 150), bottom
+ * corner on the painted string's tip. Tuned to the current kite-frog.png. */
+const KITE_CORNERS: { T: XY; R: XY; B: XY; L: XY } = {
+  T: [84, 14],
+  R: [106, 40],
+  B: [84, 70],
+  L: [62, 40],
+};
+
+/** The dot/number/face overlay on top of the painted scene, as one SVG. */
+function connectDotsKiteSvg(sceneSrc: string): string {
+  const { T, R, B, L } = KITE_CORNERS;
+  const C: XY = [(L[0] + R[0]) / 2, (T[1] + B[1]) / 2];
+  const lerp = (a: XY, b: XY, t: number): XY => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+  // 10 dots starting at the BOTTOM corner (where the painted string ends, so
+  // the child starts at the string) and going up the right side, over the top,
+  // down the left; the dashed hint closes 10 back into 1.
+  const dots: XY[] = [
+    B, lerp(B, R, 1 / 3), lerp(B, R, 2 / 3), R,
+    lerp(R, T, 0.5), T, lerp(T, L, 0.5), L,
+    lerp(L, B, 1 / 3), lerp(L, B, 2 / 3),
+  ];
+  // Hand-tuned label offsets for dots the generic outward push crowds into
+  // painted details (dot 1 sits on the string tip).
+  const labelNudge: Record<number, XY> = { 1: [5, 2.5] };
+  const halo = `paint-order:stroke fill;stroke:#ffffff;stroke-width:1px;`;
+  const dotMarks = dots
+    .map(([x, y]) => `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="0.95" fill="${INK_SOFT}" stroke="#fff" stroke-width="0.35"/>`)
+    .join("");
+  const labels = dots
+    .map(([x, y], i) => {
+      let [ox, oy] = labelNudge[i + 1] ?? [0, 0];
+      if (!ox && !oy) {
+        const len = Math.hypot(x - C[0], y - C[1]) || 1;
+        ox = ((x - C[0]) / len) * 5;
+        oy = ((y - C[1]) / len) * 5;
+      }
+      return `<text x="${(x + ox).toFixed(1)}" y="${(y + oy).toFixed(1)}" text-anchor="middle" dominant-baseline="central" style="font-family:var(--font-body),'Nunito',sans-serif;font-weight:700;font-size:4.8px;fill:${INK_SOFT};${halo}">${i + 1}</text>`;
+    })
+    .join("");
+  // The kite's smiley face, thin like the painted linework: outlined eyes with
+  // pupils + a light smile, pre-printed in the diamond's top half.
+  const fx = C[0], fy = T[1] + (B[1] - T[1]) * 0.24;
+  const face =
+    `<ellipse cx="${fx - 4.5}" cy="${fy}" rx="1.5" ry="1.9" fill="#fff" stroke="${INK_SOFT}" stroke-width="0.45"/>` +
+    `<circle cx="${fx - 4.5}" cy="${(fy + 0.6).toFixed(1)}" r="0.6" fill="${INK_SOFT}"/>` +
+    `<ellipse cx="${fx + 4.5}" cy="${fy}" rx="1.5" ry="1.9" fill="#fff" stroke="${INK_SOFT}" stroke-width="0.45"/>` +
+    `<circle cx="${fx + 4.5}" cy="${(fy + 0.6).toFixed(1)}" r="0.6" fill="${INK_SOFT}"/>` +
+    `<path d="M${fx - 5} ${fy + 4.5} Q${fx} ${fy + 7.8} ${fx + 5} ${fy + 4.5}" fill="none" stroke="${INK_SOFT}" stroke-width="0.55" stroke-linecap="round"/>`;
+  // Dashed hint along the last edge (dot 10 back down to dot 1) so the child
+  // knows the kite closes where it began.
+  const closeHint = `<line x1="${dots[9][0].toFixed(1)}" y1="${dots[9][1].toFixed(1)}" x2="${B[0]}" y2="${B[1]}" stroke="${INK_SOFT}" stroke-width="0.4" stroke-dasharray="1.1 1.9" stroke-linecap="round"/>`;
+  const scene = `<image href="${sceneSrc}" x="0" y="0" width="116" height="150" preserveAspectRatio="xMidYMid meet"/>`;
+  return `<svg viewBox="0 0 116 150" aria-hidden="true">${scene}${closeHint}${face}${dotMarks}${labels}</svg>`;
+}
+
+/** The connect-the-dots kite leaf, or null until the frog art is generated. */
+function connectDotsKiteLeaf(footer: string, pageNo: number): string | null {
+  const src = artImageSrc("kite-frog");
+  if (!src) return null;
+  return `<section class="leaf"><div class="npg">
+    <div class="npg-instruction">Spoji brojeve od 1 do 10!</div>
+    <div class="npg-scene">${connectDotsKiteSvg(src)}</div>
+    <div class="lp-foot">${escapeHtml(footer)}</div>
+  </div><div class="lp-pageno">${pageNo}</div></section>`;
+}
+
+/** Single-leaf test build: just the connect-the-dots kite page. */
+export function buildKiteTestLeaves(childName = "Ema"): string[] {
+  const footer = `moji prvi brojevi · ${(childName || "Ema").toUpperCase()}`;
+  const leaf = connectDotsKiteLeaf(footer, 1);
+  return leaf ? [tagLeaf(leaf, "kite-dots-test")] : [];
+}
+
+// ── Numbers v2 — count-the-zoo-animals leaf ───────────────────────
+// A FULL-COLOUR zoo scene (one Gemini image, scripts/gen-zoo.mjs — regenerate
+// and COUNT the animals by eye until exact) with a count-and-write row under
+// it: a small picture of each animal kind next to an empty box. The answer
+// key lives in the generated scene: 2 camels, 1 lion, 3 elephants, 4 monkeys
+// (plus a giraffe and a zebra as extras the child doesn't count). The small
+// pictures are CROPPED OUT OF THE SCENE ITSELF (scripts/crop-zoo-icons.mjs)
+// so they match the counted animals exactly — if the scene is regenerated,
+// re-tune the crop boxes there and re-run that script.
+
+const ZOO_COUNT_ICONS = ["camel", "lion", "elephant", "monkey"];
+
+/** The zoo counting leaf, or null until the scene art is generated. */
+function zooCountLeaf(footer: string, pageNo: number): string | null {
+  const src = artImageSrc("zoo-scene");
+  if (!src) return null;
+  const row = ZOO_COUNT_ICONS
+    .map((k) => `<div class="npg-zoo-cell"><img src="/icons-art/zoo-icon-${k}.png" alt="" /><div class="npg-stack-box"></div></div>`)
+    .join("");
+  return `<section class="leaf"><div class="npg">
+    <div class="npg-instruction">Prebroji životinje i napiši broj.</div>
+    <div class="npg-zoo-scene"><img src="${src}" alt="" /></div>
+    <div class="npg-zoo-row">${row}</div>
+    <div class="lp-foot">${escapeHtml(footer)}</div>
+  </div><div class="lp-pageno">${pageNo}</div></section>`;
+}
+
+/** Single-leaf test build: just the count-the-zoo-animals page. */
+export function buildZooTestLeaves(childName = "Ema"): string[] {
+  const footer = `moji prvi brojevi · ${(childName || "Ema").toUpperCase()}`;
+  const leaf = zooCountLeaf(footer, 1);
+  return leaf ? [tagLeaf(leaf, "zoo-count-test")] : [];
+}
+
+// v2 is 1–10 (not 0–9), so the diploma line needs its own wording; everything
+// else (cover/posveta/name/diploma chrome) is shared with NUMBER_STRINGS.
+const NUMBER_STRINGS_V2 = {
+  ...NUMBER_STRINGS,
+  diplomaBody: (gender?: "boy" | "girl"): string =>
+    `Naučil${gender === "boy" ? "o" : "a"} si brojeve od 1 do 10.`,
+};
+
+/**
+ * Full numbers-v2 booklet: cover → posveta → 1–10 (word+face+trace+counted
+ * objects leaf) → diploma. Reuses NUMBERS_V2 (lib/numbers-v2.ts) and the same
+ * keepsake leaves (cover/posveta/diploma) as buildNumbersPrintLeaves — only
+ * the digit page itself is the new design. Does NOT touch lib/numbers.ts or
+ * buildNumbersPrintLeaves above — the simpler 0–9 product still in use.
+ */
+export function buildNumbersV2PrintLeaves(opts: PrintOpts = {}): string[] {
+  const s = NUMBER_STRINGS_V2;
+  const name = (opts.childName || "").trim() || "Ema";
+  const surname = (opts.childSurname || "").trim();
+  const fullName = [name, surname].filter(Boolean).join(" ");
+
+  const footer = `${s.subtitle} · ${name.toUpperCase()}`;
+  const leaves: string[] = [];
+  leaves.push(tagLeaf(coverLeaf(name, opts.possessive || "", s.subtitle, s.blockWord, s.prvaWord, s.madeWith), "cover"));
+  leaves.push(tagLeaf(posvetaLeaf(opts.posveta || s.posvetaFallback(name, opts.gender)), "posveta"));
+  NUMBERS_V2.forEach((entry, i) => {
+    leaves.push(tagLeaf(numberSimpleLeaf(entry.digit, entry.word, footer, i + 1), `number-${entry.digit}`));
+  });
+  // Grammar elsewhere (posveta, diploma) already defaults to the feminine form.
+  let activityPage = NUMBERS_V2.length + 1;
+  const shirts = missingNumbersLeaf(opts.gender ?? "girl", footer, activityPage);
+  if (shirts) {
+    leaves.push(tagLeaf(shirts, "missing-numbers"));
+    activityPage++;
+  }
+  const kite = connectDotsKiteLeaf(footer, activityPage);
+  if (kite) leaves.push(tagLeaf(kite, "kite-dots"));
+  leaves.push(tagLeaf(diplomaLeaf(fullName, s.diplomaTitle, s.diplomaIntro, s.diplomaBody(opts.gender), opts.gender, s.diplomaCheer), "diploma"));
   return leaves;
 }
 
@@ -554,7 +951,7 @@ export const PRINT_CSS = `
   .lp { flex: 1; display: flex; flex-direction: column; padding: 14mm 16mm; }
   .lp-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: center; gap: 3mm 5mm; }
   .lp-letter {
-    font-family: var(--font-display), 'Baloo 2', sans-serif; font-weight: 800;
+    font-family: var(--font-baloo), 'Baloo 2', sans-serif; font-weight: 800;
     font-size: 19mm; line-height: 1; color: #fff;
     -webkit-text-stroke: 0.75mm ${INK}; paint-order: stroke fill;
   }
@@ -563,21 +960,74 @@ export const PRINT_CSS = `
   .lp-con { font-family: var(--font-hand), 'Caveat', cursive; font-weight: 700; font-size: 11mm; line-height: 1; color: ${INK}; }
   /* The word is HOLLOW too, so the child can colour it in (like the big letter). */
   .lp-word {
-    font-family: var(--font-display), 'Baloo 2', sans-serif; font-weight: 800;
+    font-family: var(--font-baloo), 'Baloo 2', sans-serif; font-weight: 800;
     font-size: 19mm; line-height: 1; letter-spacing: 0.3mm;
     color: #fff; -webkit-text-stroke: 0.7mm ${INK}; paint-order: stroke fill;
   }
-  /* Every picture is capped to the SAME square footprint (78×78mm) so all
-     pages read at a consistent size — a wide fish and a tall princess now
-     occupy the same area, not wildly different ones. */
+  /* Pictures fill the leaf as large as possible: width capped at 100mm, height
+     bounded to the picture box itself (max-height:100%) so a tall, narrow figure
+     (e.g. the Indijanac) is never clipped top/bottom by the overflow:hidden — it
+     just grows to the full available height instead. Wide art is held to 100mm. */
   .lp-pic { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; margin: 3mm 0; overflow: hidden; }
-  .lp-pic img, .lp-pic svg { max-width: 78mm; max-height: 78mm; width: auto; height: auto; object-fit: contain; }
+  .lp-pic img, .lp-pic svg { max-width: 100mm; max-height: 100%; width: auto; height: auto; object-fit: contain; }
+  /* Numbers v2 prototype: word left-aligned. */
+  .lp-head--left { justify-content: flex-start; }
+  /* Missing-numbers shirts leaf: the colour scene bleeds past the text column
+     (10mm side inset instead of 16mm) so the shirts print as big as possible. */
+  .lp-pic--wide { margin-left: -6mm; margin-right: -6mm; }
+  .lp-pic--wide img { max-width: 100%; }
   .lp-hand { width: 100%; }
   /* Number leaf: the counted picture — N icons tiled in a centred grid. */
   .lp-count { display: grid; place-content: center; justify-content: center; margin: 0 auto; }
   .lp-cell { display: grid; place-items: center; }
   .lp-count svg, .lp-count img { width: 100%; height: auto; max-height: 100%; }
   .lp-foot { margin-top: 3mm; text-align: center; font-family: var(--font-body), 'Nunito', sans-serif; font-weight: 700; font-size: 3mm; letter-spacing: 1.4mm; text-transform: uppercase; color: ${MUTED}; }
+
+  /* Numbers v2 prototype: "Igram se s brojem" (page 2 per digit) */
+  .npg { flex: 1; display: flex; flex-direction: column; padding: 16mm 16mm 14mm; }
+  .npg-eyebrow { font-family: var(--font-body), 'Nunito', sans-serif; font-weight: 800; font-size: 4mm; letter-spacing: 1.2mm; text-transform: uppercase; color: ${MUTED}; text-align: center; }
+  .npg-activity { margin-top: 14mm; display: flex; flex-direction: column; align-items: center; }
+  .npg-instruction { font-family: var(--font-baloo), 'Baloo 2', sans-serif; font-weight: 700; font-size: 7mm; color: ${INK_SOFT}; text-align: center; }
+  .npg-digits { margin-top: 8mm; display: flex; gap: 7mm; }
+  .npg-digit {
+    font-family: var(--font-baloo), 'Baloo 2', sans-serif; font-weight: 800; font-size: 16mm;
+    line-height: 1; color: #fff; -webkit-text-stroke: 0.7mm ${INK}; paint-order: stroke fill;
+  }
+  .npg-count-row { margin-top: 8mm; display: flex; gap: 8mm; justify-content: center; }
+  .npg-count-cell { width: 24mm; height: 24mm; }
+  .npg-count-cell svg, .npg-count-cell img { width: 100%; height: 100%; }
+  .npg-answer-box {
+    margin-top: 7mm; width: 22mm; height: 22mm; border: 0.7mm solid ${INK}; border-radius: 4mm;
+  }
+  /* Numbers v2 prototype: dice + cube-stack tasks page. The two pair rows share
+     the same 6-column grid so each die lines up over a number; the gap between
+     them is the drawing room for the connecting lines. */
+  .npg-activity--tight { margin-top: 15mm; }
+  /* The tasks page has no eyebrow — pull the first task up to the top padding,
+     leaving the gap between the two tasks untouched. */
+  .npg-activity--tight:first-child { margin-top: 0; }
+  .npg-pair-row { margin-top: 7mm; width: 100%; display: grid; grid-template-columns: repeat(6, 1fr); justify-items: center; align-items: center; }
+  .npg-pair-row--nums { margin-top: 16mm; }
+  /* Plain solid digits (not the hollow colour-in ones) to match the dice with. */
+  .npg-num { font-family: var(--font-body), 'Nunito', sans-serif; font-weight: 700; font-size: 12mm; line-height: 1; color: ${INK}; }
+  .npg-die { width: 13mm; height: 13mm; }
+  .npg-die svg { width: 100%; height: 100%; }
+  .npg-stacks { margin-top: 7mm; width: 100%; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 2mm; }
+  .npg-stack { display: flex; flex-direction: column; align-items: center; gap: 4mm; }
+  .npg-stack svg { display: block; }
+  .npg-stack-box { width: 12mm; height: 12mm; border: 0.6mm solid ${INK}; border-radius: 3mm; }
+  /* Connect-the-dots kite page: one SVG scene fills the leaf under the instruction. */
+  .npg-scene { flex: 1; min-height: 0; margin-top: 4mm; display: flex; justify-content: center; }
+  .npg-scene svg { width: 100%; height: 100%; }
+  /* Count-the-zoo-animals page: the colour scene fills the free height, the
+     count row beneath pairs each small animal icon with a write-in box. */
+  .npg-zoo-scene { flex: 1; min-height: 0; margin-top: 5mm; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .npg-zoo-scene img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
+  .npg-zoo-row { margin-top: 6mm; width: 100%; display: grid; grid-template-columns: repeat(4, 1fr); justify-items: center; }
+  .npg-zoo-cell { display: flex; align-items: center; gap: 3mm; }
+  .npg-zoo-cell img { height: 12mm; width: auto; max-width: 20mm; object-fit: contain; }
+  /* Pin the footer to the bottom of the tasks page whatever the content height. */
+  .npg .lp-foot { margin-top: auto; padding-top: 3mm; }
   .lp-pageno { position: absolute; bottom: 8mm; right: 12mm; font-family: var(--font-body), 'Nunito', sans-serif; font-weight: 700; font-size: 3.4mm; color: ${MUTED}; }
 
   /* Cover */
@@ -593,7 +1043,7 @@ export const PRINT_CSS = `
   }
   .cover-top { display: flex; flex-direction: column; align-items: center; gap: 0; }
   .cover-name {
-    font-family: var(--font-display), 'Baloo 2', sans-serif; font-weight: 800;
+    font-family: var(--font-baloo), 'Baloo 2', sans-serif; font-weight: 800;
     line-height: 1; letter-spacing: 0.6mm; color: ${INK};
   }
   .cover-prva {
