@@ -17,6 +17,7 @@ export async function generateMetadata({
     title,
     description: `${card.tagline} Personalizirano imenom djeteta, ručno izrađeno i dostavljeno u Hrvatskoj.`,
     openGraph: { title: `${title} · Maštograd`, description: card.tagline },
+    alternates: { canonical: `/products/${product}` },
   };
 }
 

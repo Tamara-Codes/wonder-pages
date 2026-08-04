@@ -1,7 +1,12 @@
+import type { Metadata } from "next";
 import { ShopHeader } from "@/components/shop-header";
 import { ProductCard } from "@/components/product-card";
 import { COPY } from "@/lib/landing-copy";
 import { productPriceLabel } from "@/lib/products";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/products" },
+};
 
 // The full chooser: every standalone product, side by side.
 const CHOOSER_PRODUCTS = [
