@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Baloo_2, Nunito, Fredoka, Caveat, Sriracha } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import Script from "next/script";
 import "./globals.css";
 
 // Rounded display face used ONLY by the printed leaves / previews
@@ -93,6 +94,11 @@ export default function RootLayout({
         />
         {children}
         <Analytics />
+        <Script
+          strategy="afterInteractive"
+          src="https://umami-tamara.vercel.app/script.js"
+          data-website-id="fec800d1-f943-481f-8846-3e07c2cd8fae"
+        />
       </body>
     </html>
   );
